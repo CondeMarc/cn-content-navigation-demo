@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table of Content Demo</title>
+  <style>
+  html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
+  </style>
+
+  <style>
+  body {
+    font-family: VogueAvantGarde,sans-serif;
+    font-size:14px;
+    color:#111;
+  }
+
+  h1,h2 {
+    font-family: FBDidotS;
+    font-size:2.5rem;
+    font-weight:300;
+    text-align: center;
+    margin:1rem;
+  }
+  h2 {
+    font-size:1.8rem;
+  }
+  h4 {
+    font-weight:700;
+    margin:.8rem 0;
+  }
+  header {
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    background:#121212;
+    color:#fefefe;
+  }
+  section {
+    margin:45px auto;
+    padding:45px;
+    max-width:840px;
+  }
+  section:first-of-type{
+    background:rgba(230,230,230,.4);
+  }
+  .columns {
+    display: flex;
+    flex-flow: row wrap;
+  }
+  .column {
+    position: relative;
+  }
+  .row {
+    margin-bottom:1rem;
+  }
+  .jumplink {
+    font-size: 0.9rem;
+    max-width: 400px;
+    margin: 0.4rem auto;
+    border-bottom: 1px solid #444;
+    padding: 0.4rem 0.2rem;
+    position: relative;
+  }
+  .jumplink:last-of-type {
+	border-bottom:0;
+  }
+  .jumplink h5 {
+    font-weight: 900;
+    font-size: 0.9rem;
+  }
+  .jumplink p {
+    margin: 0.4rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: inherit;
+    font-size: 0.8rem;
+  }
+
+  .jumplink a {
+    font-size: 0.7rem;
+  }
+
+  .jumplink img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    max-height: 100%;
+    width: auto;
+  }
+
+  .jumplink.productsummarygrid {
+    max-width: 600px;
+  }
+
+  .jumplink.productsummarygrid p {
+    max-width: calc(600px-100px);
+  }
+
+  .accordion {
+    max-width: 500px;
+    width: calc(100% - 20px);
+  }
+  details {
+    background: rgba(230, 230, 230, 0.4);
+    margin-bottom: 10px;
+  }
+  details > summary {
+    font-weight: 900;
+    padding: 5px 10px;
+    font-size: 1.3em;
+    cursor: pointer;
+  }
+  details > p {
+    padding: 5px 10px 10px 20px;
+    color: #444;
+    font-size: 0.8rem;
+    line-height: 1rem;
+  }
+
+  .toggle {
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .toggle-switch {
+    display: inline-block;
+    background: #ccc;
+    border-radius: 16px;
+    width: 58px;
+    height: 32px;
+    position: relative;
+    vertical-align: middle;
+    transition: background 0.25s;
+  }
+  .toggle-switch:before,
+  .toggle-switch:after {
+    content: '';
+  }
+  .toggle-switch:before {
+    display: block;
+    background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    transition: left 0.25s;
+  }
+  .toggle:hover .toggle-switch:before {
+    background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+  .toggle-checkbox:checked + .toggle-switch {
+    background: #56c080;
+  }
+  .toggle-checkbox:checked + .toggle-switch:before {
+    left: 30px;
+  }
+
+  .toggle-checkbox {
+    position: absolute;
+    visibility: hidden;
+  }
+
+  .toggle-label {
+    margin-left: 5px;
+    position: relative;
+    top: 2px;
+  }
+
+  @font-face {
+    font-family: FBDidotS;
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+    src: url('./assets/FBDidotS-Light.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: VogueAvantGarde;
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    src: url('./assets/VogueAvantGarde-Medium.woff') format('woff');
+  }
+
+  .editor-row {
+    border-bottom:1px solid #999;
+    position: relative;
+  }
+  .editor-row:last-child {
+    border-bottom:0;
+  }
+  .editor-row img {
+    position: absolute;
+    top:0;
+    right:0;
+    max-height:100%;
+    width:auto;
+    z-index:1;
+  }
+  .editor-row .delete, .link {
+    display:inline-block;
+    width:20px;
+    height:20px;
+    background-image: url("data:image/svg+xml,%3Csvg clip-rule='evenodd' fill-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m4.015 5.494h-.253c-.413 0-.747-.335-.747-.747s.334-.747.747-.747h5.253v-1c0-.535.474-1 1-1h4c.526 0 1 .465 1 1v1h5.254c.412 0 .746.335.746.747s-.334.747-.746.747h-.254v15.435c0 .591-.448 1.071-1 1.071-2.873 0-11.127 0-14 0-.552 0-1-.48-1-1.071zm14.5 0h-13v15.006h13zm-4.25 2.506c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm-4.5 0c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm3.75-4v-.5h-3v.5z' fill-rule='nonzero'/%3E%3C/svg%3E");
+    background-repeat: no-repeat no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    bottom:0;
+    right:0;
+    z-index:2;
+  }
+  .editor-row .link {
+	right:30px;
+	width:18px;
+	height:18px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M13.723 18.654l-3.61 3.609c-2.316 2.315-6.063 2.315-8.378 0-1.12-1.118-1.735-2.606-1.735-4.188 0-1.582.615-3.07 1.734-4.189l4.866-4.865c2.355-2.355 6.114-2.262 8.377 0 .453.453.81.973 1.089 1.527l-1.593 1.592c-.18-.613-.5-1.189-.964-1.652-1.448-1.448-3.93-1.51-5.439-.001l-.001.002-4.867 4.865c-1.5 1.499-1.5 3.941 0 5.44 1.517 1.517 3.958 1.488 5.442 0l2.425-2.424c.993.284 1.791.335 2.654.284zm.161-16.918l-3.574 3.576c.847-.05 1.655 0 2.653.283l2.393-2.389c1.498-1.502 3.94-1.5 5.44-.001 1.517 1.518 1.486 3.959 0 5.442l-4.831 4.831-.003.002c-1.438 1.437-3.886 1.552-5.439-.002-.473-.474-.785-1.042-.956-1.643l-.084.068-1.517 1.515c.28.556.635 1.075 1.088 1.528 2.245 2.245 6.004 2.374 8.378 0l4.832-4.831c2.314-2.316 2.316-6.062-.001-8.377-2.317-2.321-6.067-2.313-8.379-.002z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat no-repeat;
+	background-position: center center;
+	background-size: cover;
+  }
+  #editor input[type=text] {
+    border: 0;
+    width:100%;
+    padding:.6rem .4rem;
+  }
+  #editor input:focus{
+    outline: none;
+  }
+  .toc-type {
+    position: absolute;
+    right:5px;
+    top:5px;
+    padding:.2rem .6rem;
+    background:#232323;
+    color:#fefefe;
+    font-size:.7rem;
+    font-weight:700;
+    border-radius: 8px;
+    margin:.7rem 0;
+    display: inline-block;
+    z-index: 2;
+  }
+  p {
+    line-height:1rem;
+  }
+  </style>
+</head>
+<body>
+  <header></header>
+  <h1>Table of Contents</h1>
+  <section id="main">
+      <h2>Backend</h2>
+	  <div class="row" style="text-align:center"><a href="https://www.vogue.com/article/tips-for-staying-hydrated-nutritionist" style="color:#111;font-size:.7rem" target="_blank">Example page used</a></div>
+      <form>
+        <h4>Settings</h4>
+        <div class="row columns">
+          <div class="column">
+            <select name="template" id="template" style="height:100%;" onchange="javascript:preview()">
+              <option value="accordion">Accordion</option>
+              <option value="jumplinks" selected>Jump Links</option>
+              <option value="productsummarygrid">Product Summary Grid</option>
+            </select>
+            <!--<label class="toggle">
+              <input class="toggle-checkbox" type="checkbox" name="collapse">
+              <div class="toggle-switch"></div>
+              <span class="toggle-label">Collapse</span>
+            </label>-->
+          </div>
+		  <div class="column" style="margin-left:15px">
+			<select style="height:100%;" onchange="javascript:alert('not implemented')">
+				<option>Autofill</option>
+				<option>Paragraphs</option>
+				<option>Products</option>
+			</select>
+		  </div>
+		  <div class="column" style="margin-left:15px">
+			Autofill-Amount
+			<input type="number" min="0" value="0" max="20" step="1" style="height:75%;" onchange="javascript:alert('not implemented')">
+		  </div>
+          <div class="column" style="margin-left:15px">
+            <label class="toggle">
+              <input class="toggle-checkbox" type="checkbox" name="sticky" onchange="javascript:alert('not implemented')">
+              <div class="toggle-switch"></div>
+              <span class="toggle-label">Sticky</span>
+            </label>
+          </div>
+        </div>
+        <h4>Content</h4>
+        <div class="row" id="editor"></div>
+		<div style="text-align:right;font-size:.6rem"><a href="#" onclick="javascript:clearAll()">clear all</a></div>
+        <button id="addParagraph">+ paragraph</button>
+        <button id="autoFillParagraph">+ auto fill paragraphs</button>
+        <button id="addProduct">+ product</button>
+        <button id="autoFillProduct">+ auto fill products</button> <-- could be asset finder
+      </form>
+  </section>
+
+  <section>
+    <h2>Frontend</h2>
+    <!--<div style="text-align:center" class="row"><button id="refresh">Refresh</button></div-->
+    <div id="preview"></div>
+  </section>
+
+  <script type="text/html" id="editor-row-template">
+    <div class="editor-row">
+      <div class="toc-type" data-content="type">paragraph</div>
+      <input type="text" name="row[][hed]" placeholder="Hed" data-value="hed" style="font-weight:900" oninput="change(this)" data-template-bind='[{"attribute": "data-id", "value": "id"}]' data-binding="hed">
+      <input type="text" name="row[][description]" placeholder="Description" data-value="description" oninput="change(this)" data-template-bind='[{"attribute": "data-id", "value": "id"}]' data-binding="description">
+      <input type="text" name="row[][label]" placeholder="Label" data-binding="label" data-value="label" oninput="change(this)" data-template-bind='[{"attribute": "data-id", "value": "id"}]'>
+      <img src="" data-src="image" data-format="productImageFormatter">
+      <a href="javascript:alert('not implemented');" class="delete"></a>
+	  <a href="javascript:alert('show copilot link modal');" class="link"></a>
+    </div>
+  </script>
+
+  <script type="text/html" id="jumplinks-template">
+    <div class="jumplink">
+      <h5 data-content="hed"></h5>
+      <p data-content="description"></p>
+      <a href="#" data-content="label"></a>
+    </div>
+  </script>
+
+  <script type="text/html" id="accordion-template">
+    <details>
+      <summary data-content="hed"></summary>
+      <p data-content="description"></p>
+      <!--<button data-content="label"></button>-->
+    </details>
+  </script>
+
+  <script type="text/html" id="productsummarygrid-template">
+      <div class="jumplink productsummarygrid">
+        <h5 data-content="hed"></h5>
+        <p data-content="description"></p>
+        <button href="#" data-content="label"></button>
+        <img src="" data-src="image" data-format="productImageFormatter">
+      </div>
+    </script>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.loadtemplate/1.5.10/jquery.loadTemplate.min.js"
+    integrity="sha512-T1zx+UG2gXu9mr29wvzaKkNUmAOAie40T32ZPIvcRPJgO5br53+Ocqj8gzguUuix7FK+Z3ncRCJMaZcumnPZzg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    //https://www.vogue.com/article/tips-for-staying-hydrated-nutritionist
+  let data = [];
+  $.addTemplateFormatter('productImageFormatter',
+    (value, template) => {
+      if (value && value !== undefined && value != '') {
+        return '<img src"'+image+'">';
+      }
+      return '';
+  });
+  $('#addParagraph').click((e) => {
+    e.preventDefault();
+    data.push(
+      {
+        id: uid(),
+        hed: 'New Item',
+        auto: false,
+        type: 'paragraph',
+      }
+    );
+    $('#editor').loadTemplate($('#editor-row-template'), data);
+    preview();
+  });
+    $('#addProduct').click((e) => {
+      e.preventDefault();
+      data.push(
+        {
+          id: uid(),
+          hed: 'New Product',
+          auto: false,
+          type: 'product',
+        }
+      );
+      $('#editor').loadTemplate($('#editor-row-template'), data);
+      preview();
+    });
+  $('#autoFillParagraph').click((e) => {
+    e.preventDefault();
+    clearData('paragraph');
+    $(content).find('h2').each(function (i, el) {
+      data.push(
+        {
+          id: uid(),
+          hed: $(el).html(),
+          description: $(el).next('p').html(),
+          label: 'read more',
+          auto: true,
+          type: 'paragraph',
+        }
+      );
+    });
+    $('#editor').loadTemplate($('#editor-row-template'),data);
+    preview();
+  });
+  $('#autoFillProduct').click((e) => {
+    e.preventDefault();
+    clearData('product');
+    $(content).find('.product-embed').each(function (i, el) {
+      data.push(
+        {
+          id: uid(),
+          hed: $(el).find("[class^='.UnifiedProductCardName-'], [class*=' UnifiedProductCardName-']").html(),
+          label: $(el).find('.product-offer__cta-block').first().find('p').html(),
+          image: $(el).find('img').attr('src'),
+          type: 'product',
+          auto: true,
+        }
+      );
+    });
+    $('#editor').loadTemplate($('#editor-row-template'), data);
+    preview();
+  });
+
+  $('#refresh').click((e) => {
+    e.preventDefault();
+    preview();
+  });
+
+  const clearData = (type) => {
+    let newData = [];
+    for (const o of data) {
+      if (type === o.type && o.auto === true) {
+      } else {
+        newData.push(o);
+      }
+    }
+    data = newData;
+  };
+
+  const preview = () => {
+    switch($('#template').val()) {
+      case 'jumplinks':
+        $('#preview').loadTemplate($('#jumplinks-template'), data);
+        break;
+      case 'accordion':
+        $('#preview').loadTemplate($('#accordion-template'), data);
+      break;
+      case 'productsummarygrid':
+        $('#preview').loadTemplate($('#productsummarygrid-template'), data);
+      break;
+    }
+  };
+
+  const uid = function () {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+
+  const change = (el) => {
+    let id = $(el).attr('data-id');
+    for (const o of data) {
+      if (o.id === id) {
+        o[$(el).attr('data-binding')] = $(el).val();
+        break;
+      }
+    }
+
+    preview();
+  };
+  
+  const clearAll = () => {
+	if (confirm('Clear all?') == true) {
+	  data = [];
+	  $('#editor').loadTemplate($('#editor-row-template'),data);
+	  preview();
+	} 
+	return false;
+  }
+  </script>
+</body>
+</html>
+
+
+
+
+
+<script>
+  let content = "<main id=\"main-content\" tabindex=\"-1\" class=\"BasePageMainContent-kFvAuh hHEPkK page__main-content\"><article class=\"article main-content\" lang=\"en-US\"><div class=\"ArticlePageLedeBackground-EufvU ittFsh\"><header class=\"ContentHeaderWrapper-clujbs haubOl content-header article__content-header\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;ContentHeader&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;ContentHeader&quot;}\" data-include-experiments=\"true\"><div data-testid=\"ContentHeaderContainer\" class=\"ContentHeaderContainer-cGKRbE knDxNq\"><div class=\"ContentHeaderHedAccreditationWrapper-GFiQf cDNVlV\"><div data-testid=\"ContentHeaderTitleBlockWrapper\" class=\"ContentHeaderTitleBlockWrapper-cjmSKp kjLxCB\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;TitleBlock&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;TitleBlock&quot;}\" data-include-experiments=\"true\"><div data-testid=\"ContentHeaderRubric\" class=\"ContentHeaderRubricBlock-LmpbT hsydfY\"><div data-testid=\"ContentHeaderRubricDateBlock\" class=\"ContentHeaderRubricDateBlock-kAQcZP fTFWxD\"><div class=\"RubricWrapper-dKmCNX eNRqSb rubric ContentHeaderRubricContainer-eTudtt iRsSlw\"><a class=\"RubricLink-gRWSOU fTtYjx rubric__link\" href=\"/beauty/health-and-fitness\"><span class=\"RubricName-fVtemz cLxcNi rubric__name\">Wellness</span></a></div></div></div><h1 data-testid=\"ContentHeaderHed\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ ContentHeaderHed-NCyCC iUEiRd bwDymH isouMH\">11 Easy Ways to Stay Hydrated, According to Celebrity Nutritionists</h1></div><div class=\"ContentHeaderAccreditation-lfctVB eDhhwT content-header__accreditation\" data-testid=\"ContentHeaderAccreditation\"><div class=\"ContentHeaderByline-kmPyCa emiglw\"><div class=\"ContentHeaderBylineContent-dpPmNn DRFq\"><div data-testid=\"BylinesWrapper\" class=\"BylinesWrapper-KIudk irTIfE bylines ContentHeaderBylines-cZqgyJ bHLeKI\"><p class=\"BylineWrapper-jWHrLH dgxmAO byline bylines__byline\" data-testid=\"BylineWrapper\" itemprop=\"author\" itemtype=\"http://schema.org/Person\"><span itemprop=\"name\" class=\"BylineNamesWrapper-jbHncj fuDQVo\"><span data-testid=\"BylineName\" class=\"BylineName-kwmrLn cYaBaU byline__name\"><span class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BylinePreamble-iJolpQ iUEiRd kxuydN gnILss byline__preamble\">By </span><a class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM BylineLink-gEnFiw iUEiRd hHRAkO haUSoQ eErqIx byline__name-link button\" href=\"/contributor/lauren-valenti\">Lauren Valenti</a></span> and <span data-testid=\"BylineName\" class=\"BylineName-kwmrLn cYaBaU byline__name\"><a class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM BylineLink-gEnFiw iUEiRd hHRAkO haUSoQ eErqIx byline__name-link button\" href=\"/contributor/hannah-coates\">Hannah Coates</a></span></span></p></div><time data-testid=\"ContentHeaderPublishDate\" datetime=\"2024-04-20T13:00:00-04:00\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ ContentHeaderPublishDate-eIBicG iUEiRd eNpMLJ jDQNvc\">April 20, 2024</time></div></div></div></div><div class=\"ContentHeaderLeadAsset-hGbumP fEJLqZ lead-asset ContentHeaderLeadAssetWrapper-hfXHEc bYmKWA lead-asset--width-small\" data-testid=\"ContentHeaderLeadAsset\"><figure class=\"ContentHeaderLeadAssetContent-kOfYSG dRGWbI\"><div class=\"ContentHeaderLeadAssetContentMedia-bLEIpi jjhWdS lead-asset__content__photo\"><span class=\"SpanWrapper-umhxW jvZaPI responsive-asset ContentHeaderResponsiveAsset-bREgIb cZenhb\"><div data-test=\"aspect-ratio-container\" class=\"AspectRatioContainer-bJHpJz dzNWJd\"><div class=\"aspect-ratio--overlay-container\"><picture class=\"ResponsiveImagePicture-cWuUZO dUOtEa ContentHeaderResponsiveAsset-bREgIb cZenhb responsive-image\"><source media=\"(max-width: 767px)\" srcset=\"https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_120,c_limit/00-story-hydration.jpg 120w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_240,c_limit/00-story-hydration.jpg 240w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_320,c_limit/00-story-hydration.jpg 320w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_640,c_limit/00-story-hydration.jpg 640w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_960,c_limit/00-story-hydration.jpg 960w\" sizes=\"100vw\"><source media=\"(min-width: 768px)\" srcset=\"https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_120,c_limit/00-story-hydration.jpg 120w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_240,c_limit/00-story-hydration.jpg 240w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_320,c_limit/00-story-hydration.jpg 320w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_640,c_limit/00-story-hydration.jpg 640w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_960,c_limit/00-story-hydration.jpg 960w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_1280,c_limit/00-story-hydration.jpg 1280w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_1600,c_limit/00-story-hydration.jpg 1600w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_1920,c_limit/00-story-hydration.jpg 1920w, https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_2240,c_limit/00-story-hydration.jpg 2240w\" sizes=\"100vw\"><img alt=\"Image may contain Human Person Drink Beer Alcohol Beverage and Bottle\" class=\"ResponsiveImageContainer-eybHBd fptoWY responsive-image__image\" src=\"https://assets.vogue.com/photos/5d4db409051fb100082dcb6f/master/w_2560%2Cc_limit/00-story-hydration.jpg\"></picture></div></div></span><div class=\"CaptionWrapper-jSZdqE bViSGz caption ContentHeaderLeadAssetCaption-hPWmSN dWhfyS\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;Caption&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;Caption&quot;}\" data-include-experiments=\"true\"><span class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ CaptionCredit-ejegDm iUEiRd ftKqkn fNaHcW caption__credit\">Photographed by Arthur Eglort, Vogue, Feb 1989</span></div></div></figure><div data-testid=\"ContentHeaderLeadRailAnchor\" class=\"ContentHeaderLeadRailAnchor-jYVcDc djtEof\"></div></div></div></header></div><div data-attribute-verso-pattern=\"article-body\" class=\"ArticlePageContentBackGround-cNiFNN kbAoLA article-body__content\"><div class=\"ActionBarWrapperContent-lasBkU hxnqye\"><div class=\"ActionBarWrapperComponent-cjwxLS bEeSLb\"><div data-attr-viewport-monitor=\"\" class=\"ActionBarWrapper-dhxmQh hQcUeN viewport-monitor-anchor\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;ActionBar&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;ActionBar&quot;}\" data-include-experiments=\"true\"><button id=\"bookmark\" aria-label=\"Save\" class=\"ActionBarButton-dyFOZU fZWJgv bookmark large-screen\"><span class=\"ActionBarSecondaryButtonPrimaryIcon-isbvyN cAwccV bookmark-button-icon\"><svg class=\"icon icon-bookmark\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><title>Save this story</title><path class=\"icon-bookmark-stroke\" d=\"M11.7661 16.3228L4.5 20.1695V3.5H19.5V20.1695L12.2339 16.3228L12 16.199L11.7661 16.3228Z\" stroke-linecap=\"square\"></path></svg></span><span class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ ActionBarButtonText-bYXYuh iUEiRd ljYHRf gkccfO\">Save</span></button></div><div data-attr-viewport-monitor=\"\" class=\"ActionBarWrapper-dhxmQh fuhshO viewport-monitor-anchor\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;ActionBar&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;ActionBar&quot;}\" data-include-experiments=\"true\"><button id=\"bookmark\" aria-label=\"Save\" class=\"ActionBarButton-dyFOZU dDErlb bookmark mobile\"><span class=\"ActionBarSecondaryButtonPrimaryIcon-isbvyN cAwccV bookmark-button-icon\"><svg class=\"icon icon-bookmark\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><title>Save this story</title><path class=\"icon-bookmark-stroke\" d=\"M11.7661 16.3228L4.5 20.1695V3.5H19.5V20.1695L12.2339 16.3228L12 16.199L11.7661 16.3228Z\" stroke-linecap=\"square\"></path></svg></span><span class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ ActionBarButtonText-bYXYuh iUEiRd ljYHRf gkccfO\">Save</span></button></div></div></div><div class=\"ArticlePageChunksContent-etcMtP bwyLBj\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;ChunkedArticleContent&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;ChunkedArticleContent&quot;}\" data-include-experiments=\"true\"><div class=\"GridWrapper-cAzTTK kHBDeH grid grid-margins grid-items-2 ArticlePageDisclaimerGrid-gIJgHl dJomLc grid-layout--adrail narrow wide-adrail\"><div class=\"GridItem-buujkM stRKV grid--item grid-layout__content\"><div class=\"TextBlockWrapper-bNZsMC dqPNKv StyledTextblock-SJflO eYjtWF disclaimer ArticlePageDisclaimer-jNIoBl eVmMSn\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;Disclaimer&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;Disclaimer&quot;}\" data-include-experiments=\"true\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ TextBlockText-gtrMkY iUEiRd bXNmlX kQegaj\">We may earn a commission if you buy something from any affiliate links on our site.</p></div></div></div><div data-testid=\"ArticlePageChunks\" class=\"ArticlePageChunks-fLyCVG eOdfIs\"><div class=\"GridWrapper-cAzTTK kHBDeH grid grid-margins grid-items-2 ArticlePageChunksGrid-hfxaau eSqXkM grid-layout--adrail narrow wide-adrail\"><div class=\"GridItem-buujkM stRKV grid--item grid-layout__content\"><div class=\"BodyWrapper-kufPGa jtraPi body body__container article__body\" data-journey-hook=\"client-content\" data-testid=\"BodyWrapper\"><div class=\"body__inner-container\"><p>Water is essential to our health and bodily wellbeing. And yet it’s not uncommon for us to find staying hydrated difficult–especially as busy, burned-out individuals.</p><p>“Everything in your body depends on optimal hydration, from organ function to hormone balance,” explains Los Angeles-based nutritionist <a data-offer-url=\"https://www.instagram.com/_kimberlysnyder/?hl=en\" class=\"external-link\" data-event-click=\"{&quot;element&quot;:&quot;ExternalLink&quot;,&quot;outgoingURL&quot;:&quot;https://www.instagram.com/_kimberlysnyder/?hl=en&quot;}\" href=\"https://www.instagram.com/_kimberlysnyder/?hl=en\" rel=\"noopener\" target=\"_blank\">Kimberly Snyder</a>. “When you’re hydrated, your joints are lubricated, your skin is being nourished, and your hair follicles are able to grow healthfully.” And when you’re not? Not only will skin be less lustrous and hair more brittle, but energy lags, detoxification slows down, and digestion is delayed. “As matter starts to build and accumulate in your system, it weighs you down–you feel heavier and less energized.”</p><p>Rhian Stephenson, a nutritionist, naturopath and founder of Artah, says that being dehydrated can also lead to stress. “Even subtle changes in hydration can lead to impaired energy production in the brain, alongside changes in mood and cognition, feelings of anxiety, depression and poor sleep quality,” she says. ”Not to mention slight decreases in total body water can significantly elevate cortisol, our stress hormone.” Mild dehydration can cause a multitude of problems in the body and drinking plenty of water, as well as tweaking your diet, can go a long way for a healthier day-to-day.</p><div class=\"Container-bkChBi byNLHx\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;CNEInterludeEmbed&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;CNEInterludeEmbed&quot;}\" data-include-experiments=\"true\"></div><p>Here, Snyder and Stephenson provide their tips on how to stay optimally hydrated.</p><h2>Individualize your intake</h2><p>Eight glasses of water has long been considered the essential amount of water to drink to stay hydrated. But according to Snyder, it’s actually contingent on each individual body’s needs and activity level, as well as factors such as the temperature outside (the more you sweat, the more water you lose). As a general rule of thumb, Snyder says that women need around 1.7 liters of water daily, while men need around 3.7 liters. But if you want a more bespoke quota: “Drink between half an ounce and an ounce of water for each pound you weigh every day,” says Snyder. “For example, if you weigh 140 pounds, that would translate to be 70 to 140 ounces of water a day.” (140 ounces is closer to 17 glasses.)</p><h2>Supplement with electrolytes</h2><p>While drinking water is obviously key to staying hydrated, if you don’t have adequate <a href=\"https://www.vogue.com/article/electrolytes-better-hydration\" target=\"_blank\">electrolyte</a> levels, it won’t be enough. “In fact, drinking too much water without sufficient electrolytes can just exacerbate the issue,” explains Stephenson. “Things like coffee and alcohol can disrupt electrolyte imbalance, and even some of the things we perceive as healthy can cause electrolyte loss–think exercise, sweating (even during heatwaves) and low carbohydrate diets.”</p><h2>Drink at room temperature</h2><p>“I <em>always</em> tell my clients how important it is to drink room-temperature water,” says Snyder, who emphasizes that it’s more hydrating than cold water, as your body has to spend more energy to bring cold water to a temperature it can absorb, which results in water loss. Furthermore, icy water can cause the blood vessels in your stomach to shrink slightly, hindering the digestion process and thus slowing hydration.</p><h2>Hydrate first thing in the morning</h2><p>Starting the day by replenishing fluids is the key to daily hydration, Snyder says. “We often get dehydrated overnight,” she explains. “Hydrating in the morning will give you more energy and set you up for a day of success.” And if you want to take it to the next level, drink a cup of hot water with a squeeze of liver-supporting <a href=\"https://www.vogue.com/article/lemon-water-health-benefits\" target=\"_blank\">lemon</a>. “It’s filled with vitamin C and helps support your cleansing process,” Snyder says. It’s key to hydrate before you drink any caffeine.</p><h2>Drink between meals instead of during</h2><p>We’ve grown accustomed to eating meals alongside tall glasses of water, but it’s actually the worst time to chug. “Too much liquid with meals dilutes your digestive juices and can delay dehydration,” says Snyder. Instead, drink significant quantities of water between meals and throughout the day—holding off at least a half an hour before your meals, and an hour following meals. And to ensure that you’re on course throughout the day, keep tabs by monitoring the colour of your urine (the clearer the better, says Snyder), or with an app such as Waterlogged or Gulp, each of which offers features that help you track intake and set goals, as well as remind you to keep drinking.</p><h2>Eat water-rich foods</h2><p>“Obviously water is the first and most obvious source of hydration, but there are some great vegetables you can eat that will help keep you hydrated,” Snyder says. Her number one favorite is cucumber, which is high in enzyme-charged water, B vitamins, nutrients, electrolytes, and silica. Another is celery, which is packed with vitamins, minerals and fibre to keep the body refreshed and skin glowing, she says. She recommends adding both to her cult-favorite <a data-offer-url=\"https://mysolluna.com/ggs/\" class=\"external-link\" data-event-click=\"{&quot;element&quot;:&quot;ExternalLink&quot;,&quot;outgoingURL&quot;:&quot;https://mysolluna.com/ggs/&quot;}\" href=\"https://mysolluna.com/ggs/\" rel=\"noopener\" target=\"_blank\">Glowing Green Smoothie</a> and drinking it first thing in the morning on an empty stomach. That way, “the body can absorb all the benefits first thing,” she explains.</p><h2>Compensate for caffeine and alcohol</h2><p>Both caffeine and alcohol are diuretics, which means that that while you drink them, you’ll urinate more and lose more fluid. To ensure you stay hydrated, compensate with additional liquids. “If you opt to have a glass of one or the other, follow it with another full glass of water to work towards balancing yourself back out,” she instructs.</p><h2>Increase your intake of magnesium and potassium-rich foods</h2><p>Because they’re naturally full of electrolytes. Potassium-rich foods include leafy greens, zucchini, <a href=\"https://www.vogue.com/article/avocado-health-benefits\" target=\"_blank\">avocados</a>, potatoes, <a href=\"https://www.vogue.com/article/this-unlikely-ingredient-is-a-good-source-of-vitamin-d\" target=\"_blank\">mushrooms</a>, and bananas, while those rich in magnesium include spinach, chickpeas, almonds, tuna, legumes, and raw cacao.</p><h2>Carry a water bottle</h2><p>When it comes to consistent hydration, there’s no more foolproof strategy than a reusable water bottle. “It helps remind you to drink water while you are out and about for the day,” Snyder says. Or start the day with a big jug of filtered water with your goal water intake, and fill all your water bottles from it to monitor your progress throughout the day. “I’m all for visual and physical cues like water bottles you see that remind you to drink up,” says Snyder.</p><div class=\"GridWrapper-cAzTTK fnZLGI grid grid-even grid-items-2 GroupCalloutWrapper-bPWknp djAzDO callout callout--group callout--group-2\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;GroupCallout&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;GroupCallout&quot;}\" data-include-experiments=\"true\"><div class=\"GridItem-buujkM dEqBaI grid--item\"><div type=\"embed\" class=\"UnifiedProductCardWrapper-iFnytN gDPsY product-embed\" data-item=\"{&quot;ctaHref&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtH86r6yCsnDSkWqLKn7yG2UyCnmf1DcKM8H9TvsXmYYGeSxsECsqFaFzJnmJDkdS1W6i6y9QA9EUoHgc1qfM9cDAyefG1k6LEGD47eeZ5fvUij3VCauF6kbN9Us3U&quot;,&quot;dangerousDek&quot;:&quot;&quot;,&quot;productBrand&quot;:&quot;&quot;,&quot;dangerousHed&quot;:&quot;Berkey Gravity-Fed Water Filter&quot;,&quot;embedSize&quot;:null,&quot;isFirstProduct&quot;:true,&quot;isSponsored&quot;:false,&quot;offerRetailer&quot;:&quot;AMAZON&quot;,&quot;offerUrl&quot;:&quot;https://www.amazon.com/Travel-Berkey-Gravity-Fed-Purification-Elements/dp/B00FMUYU6I&quot;,&quot;contentType&quot;:&quot;product&quot;,&quot;productId&quot;:&quot;64b6b7d755936ebc9367b8a2&quot;,&quot;productOfferVariation&quot;:&quot;PriceOutsideCenter&quot;,&quot;showOfferUrl&quot;:false,&quot;showPriceOnButton&quot;:true,&quot;showAffiliateDisclaimerOnFirstProduct&quot;:false,&quot;dangerousCredit&quot;:null,&quot;showLocalisedOffers&quot;:true,&quot;isUpcEnabled&quot;:true,&quot;index&quot;:0,&quot;hasAffiliateLinkDisabled&quot;:false,&quot;id&quot;:&quot;64b6b7d755936ebc9367b8a2&quot;,&quot;brand&quot;:{&quot;name&quot;:&quot;&quot;},&quot;offers&quot;:[{&quot;offerUrl&quot;:&quot;https://www.amazon.com/Travel-Berkey-Gravity-Fed-Purification-Elements/dp/B00FMUYU6I&quot;,&quot;price&quot;:&quot;$344&quot;,&quot;currency&quot;:&quot;USD&quot;,&quot;purchaseUri&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtH86r6yCsnDSkWqLKn7yG2UyCnmf1DcKM8H9TvsXmYYGeSxsECsqFaFzJnmJDkdS1W6i6y9QA9EUoHgc1qfM9cDAyefG1k6LEGD47eeZ5fvUij3VCauF6kbN9Us3U&quot;,&quot;sellerName&quot;:&quot;AMAZON&quot;,&quot;countryCode&quot;:&quot;US&quot;,&quot;reducedPrice&quot;:&quot;&quot;}],&quot;component&quot;:&quot;unified_product_card&quot;}\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-include-experiments=\"true\"><div class=\"UnifiedProductCardObject-fQsetj ixCaho\"><div class=\"UnifiedProductCardHeader-dtLsXB gGCgMs\"><div class=\"UnifiedProductCardImageWrapper-cWMgfa jqqdKX\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXVACebUtMs4kcziUQp5LoNYwyxSTmzHntnHQegqjg8VG4MR2V89MR8qEtqFb9xAUXpXa5nyEVqiZsEfsjDyrNoVBEVacYHMxtRkqxzHojCezATAUtp1ztq6mk67ghVrauNu8XTXma9kG3xCsWShgyDk2YrHFXy6jYh5Q5GJ2UhiYJh6F7HkgsT\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" tabindex=\"-1\" aria-hidden=\"true\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM UnifiedProductEmbedImageLink-hEsXrK iUEiRd hHRAkO cDOurZ bkvcCN\"><span class=\"SpanWrapper-umhxW jvZaPI responsive-asset\"><picture class=\"ResponsiveImagePicture-cWuUZO dUOtEa responsive-image\" style=\"\"><img alt=\"\" class=\"ResponsiveImageContainer-eybHBd fptoWY responsive-image__image\" src=\"https://assets.vogue.com/photos/64b6b7a4bbb79c09d48cf229/3:4/w_748%2Cc_limit/slide_%2520(56).jpg\" srcset=\"https://assets.vogue.com/photos/64b6b7a4bbb79c09d48cf229/3:4/w_120,c_limit/slide_%20(56).jpg 120w, https://assets.vogue.com/photos/64b6b7a4bbb79c09d48cf229/3:4/w_240,c_limit/slide_%20(56).jpg 240w, https://assets.vogue.com/photos/64b6b7a4bbb79c09d48cf229/3:4/w_320,c_limit/slide_%20(56).jpg 320w, https://assets.vogue.com/photos/64b6b7a4bbb79c09d48cf229/3:4/w_640,c_limit/slide_%20(56).jpg 640w\" sizes=\"100vw\"></picture></span></a></div></div></div><div class=\"UnifiedProductCardBody-hDFFwy btRDdD\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardBrandName-kBReJq iUEiRd befvEX isqkVu upc-brandName\"></p><div class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardNameWrapper-fHyUwm iUEiRd ljYHRf fObZJS\"><p id=\"upc_64b6b7d755936ebc9367b8a2\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardName-jnQGSN iUEiRd fITBRd eRESSi\">Berkey Gravity-Fed Water Filter</p></div><div class=\"UnifiedProductCardOfferWrapper-fQFmNV kWWqYT\"><div class=\"ProductOfferWrapper-dpcYKd UdHQo product-offer\"><div class=\"ProductOfferCtaBlock-bduvOV aRmix product-offer__cta-block\" id=\"button_label_$344AMAZON\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXVACebUtMs4kcziUQp5LoNYwyxSTmzHntnHQegqjg8VG4MR2V89MR8qEtqFb9xAUXpXa5nyEVqiZsEfsjDyrNoVBEVacYHMxtRkqxzHojCezATAUtp1ztq6mk67ghVrauNu8XTXma9kG3xCsWShgyDk2YrHFXy6jYh5Q5GJ2UhiYJh6F7HkgsT\" rel=\"sponsored noopener\" target=\"_blank\" aria-labelledby=\"upc_64b6b7d755936ebc9367b8a2 button_label_$344AMAZON\" data-buy-button=\"true\" data-offer-retailer=\"AMAZON\" data-offer-url=\"https://www.amazon.com/Travel-Berkey-Gravity-Fed-Purification-Elements/dp/B00FMUYU6I\" class=\"BaseButton-bLlsy ButtonWrapper-xCepQ cRxydS uFkmf button button--primary-pair product-offer__buy-button\" data-event-click=\"{&quot;element&quot;:&quot;Button&quot;,&quot;outgoingURL&quot;:&quot;https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXVACebUtMs4kcziUQp5LoNYwyxSTmzHntnHQegqjg8VG4MR2V89MR8qEtqFb9xAUXpXa5nyEVqiZsEfsjDyrNoVBEVacYHMxtRkqxzHojCezATAUtp1ztq6mk67ghVrauNu8XTXma9kG3xCsWShgyDk2YrHFXy6jYh5Q5GJ2UhiYJh6F7HkgsT&quot;}\" data-testid=\"Button\" type=\"\"><span class=\"ButtonLabel-cjAuJN hzwRuG button__label\"><span>$344</span> <p class=\"price-above-seller-name\">AMAZON</p></span></a></div></div></div></div></div></div><div class=\"GridItem-buujkM dEqBaI grid--item\"><div type=\"embed\" class=\"UnifiedProductCardWrapper-iFnytN gDPsY product-embed\" data-item=\"{&quot;ctaHref&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtH86r6yCsnDSkWqLKn7yG2UyCnmhaBKmj4xP8Cepn5GabA3vVEVXnWfEwdvvJnNgXWyba816USDxASkWC1f3M37MtRydbZxvqEFmbm1LoYP1TqGXtk9GBxL7Wy9Mx&quot;,&quot;dangerousDek&quot;:&quot;&quot;,&quot;productBrand&quot;:&quot;&quot;,&quot;dangerousHed&quot;:&quot;Brita Premium Filtered Water Bottle with Straw&quot;,&quot;embedSize&quot;:null,&quot;isFirstProduct&quot;:false,&quot;isSponsored&quot;:false,&quot;offerRetailer&quot;:&quot;AMAZON&quot;,&quot;offerUrl&quot;:&quot;https://www.amazon.com/Brita-Plastic-Water-Filter-Bottle/dp/B08FSBNYQC/&quot;,&quot;contentType&quot;:&quot;product&quot;,&quot;productId&quot;:&quot;64b6b7d755936ebc9367b8a5&quot;,&quot;productOfferVariation&quot;:&quot;PriceOutsideCenter&quot;,&quot;showOfferUrl&quot;:false,&quot;showPriceOnButton&quot;:true,&quot;showAffiliateDisclaimerOnFirstProduct&quot;:false,&quot;dangerousCredit&quot;:null,&quot;showLocalisedOffers&quot;:true,&quot;isUpcEnabled&quot;:true,&quot;index&quot;:1,&quot;hasAffiliateLinkDisabled&quot;:false,&quot;id&quot;:&quot;64b6b7d755936ebc9367b8a5&quot;,&quot;brand&quot;:{&quot;name&quot;:&quot;&quot;},&quot;offers&quot;:[{&quot;offerUrl&quot;:&quot;https://www.amazon.com/Brita-Plastic-Water-Filter-Bottle/dp/B08FSBNYQC/&quot;,&quot;price&quot;:&quot;$23&quot;,&quot;currency&quot;:&quot;USD&quot;,&quot;purchaseUri&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtH86r6yCsnDSkWqLKn7yG2UyCnmhaBKmj4xP8Cepn5GabA3vVEVXnWfEwdvvJnNgXWyba816USDxASkWC1f3M37MtRydbZxvqEFmbm1LoYP1TqGXtk9GBxL7Wy9Mx&quot;,&quot;sellerName&quot;:&quot;AMAZON&quot;,&quot;countryCode&quot;:&quot;US&quot;,&quot;reducedPrice&quot;:&quot;&quot;}],&quot;component&quot;:&quot;unified_product_card&quot;}\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-include-experiments=\"true\"><div class=\"UnifiedProductCardObject-fQsetj ixCaho\"><div class=\"UnifiedProductCardHeader-dtLsXB gGCgMs\"><div class=\"UnifiedProductCardImageWrapper-cWMgfa jqqdKX\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXVACebUtMs4kcziUQp5LoNYwyxSTpUUx6syhXLZaQvCducRrGWAsPfaCLwmYm9kQR61bpbjB9pckFUA9HuKgcHVU5LsSdAUJdVAoLkiFBQGNWPQxW7k5YjS7dDDxf6dFdXqkXSbC7gUtgZrnFeqjJLnE9sj4iUCzKhHkeYdKrc1Y23Jrfjq8pZ\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" tabindex=\"-1\" aria-hidden=\"true\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM UnifiedProductEmbedImageLink-hEsXrK iUEiRd hHRAkO cDOurZ bkvcCN\"><span class=\"SpanWrapper-umhxW jvZaPI responsive-asset\"><picture class=\"ResponsiveImagePicture-cWuUZO dUOtEa responsive-image\" style=\"\"><img alt=\"\" class=\"ResponsiveImageContainer-eybHBd fptoWY responsive-image__image\" src=\"https://assets.vogue.com/photos/64b6b7a404f185c3f1251caf/3:4/w_748%2Cc_limit/slide_2%2520(12).jpg\" srcset=\"https://assets.vogue.com/photos/64b6b7a404f185c3f1251caf/3:4/w_120,c_limit/slide_2%20(12).jpg 120w, https://assets.vogue.com/photos/64b6b7a404f185c3f1251caf/3:4/w_240,c_limit/slide_2%20(12).jpg 240w, https://assets.vogue.com/photos/64b6b7a404f185c3f1251caf/3:4/w_320,c_limit/slide_2%20(12).jpg 320w, https://assets.vogue.com/photos/64b6b7a404f185c3f1251caf/3:4/w_640,c_limit/slide_2%20(12).jpg 640w\" sizes=\"100vw\"></picture></span></a></div></div></div><div class=\"UnifiedProductCardBody-hDFFwy btRDdD\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardBrandName-kBReJq iUEiRd befvEX isqkVu upc-brandName\"></p><div class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardNameWrapper-fHyUwm iUEiRd ljYHRf fObZJS\"><p id=\"upc_64b6b7d755936ebc9367b8a5\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardName-jnQGSN iUEiRd fITBRd eRESSi\">Brita Premium Filtered Water Bottle with Straw</p></div><div class=\"UnifiedProductCardOfferWrapper-fQFmNV kWWqYT\"><div class=\"ProductOfferWrapper-dpcYKd UdHQo product-offer\"><div class=\"ProductOfferCtaBlock-bduvOV aRmix product-offer__cta-block\" id=\"button_label_$23AMAZON\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXVACebUtMs4kcziUQp5LoNYwyxSTpUUx6syhXLZaQvCducRrGWAsPfaCLwmYm9kQR61bpbjB9pckFUA9HuKgcHVU5LsSdAUJdVAoLkiFBQGNWPQxW7k5YjS7dDDxf6dFdXqkXSbC7gUtgZrnFeqjJLnE9sj4iUCzKhHkeYdKrc1Y23Jrfjq8pZ\" rel=\"sponsored noopener\" target=\"_blank\" aria-labelledby=\"upc_64b6b7d755936ebc9367b8a5 button_label_$23AMAZON\" data-buy-button=\"true\" data-offer-retailer=\"AMAZON\" data-offer-url=\"https://www.amazon.com/Brita-Plastic-Water-Filter-Bottle/dp/B08FSBNYQC/\" class=\"BaseButton-bLlsy ButtonWrapper-xCepQ cRxydS uFkmf button button--primary-pair product-offer__buy-button\" data-event-click=\"{&quot;element&quot;:&quot;Button&quot;,&quot;outgoingURL&quot;:&quot;https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXVACebUtMs4kcziUQp5LoNYwyxSTpUUx6syhXLZaQvCducRrGWAsPfaCLwmYm9kQR61bpbjB9pckFUA9HuKgcHVU5LsSdAUJdVAoLkiFBQGNWPQxW7k5YjS7dDDxf6dFdXqkXSbC7gUtgZrnFeqjJLnE9sj4iUCzKhHkeYdKrc1Y23Jrfjq8pZ&quot;}\" data-testid=\"Button\" type=\"\"><span class=\"ButtonLabel-cjAuJN hzwRuG button__label\"><span>$23</span> <p class=\"price-above-seller-name\">AMAZON</p></span></a></div></div></div></div></div></div></div><div class=\"GridWrapper-cAzTTK fnZLGI grid grid-even grid-items-2 GroupCalloutWrapper-bPWknp djAzDO callout callout--group callout--group-2\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;GroupCallout&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;GroupCallout&quot;}\" data-include-experiments=\"true\"><div class=\"GridItem-buujkM dEqBaI grid--item\"><div type=\"embed\" class=\"UnifiedProductCardWrapper-iFnytN gDPsY product-embed\" data-item=\"{&quot;ctaHref&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3zdE3CxVJ2DP6DEJ6UMKEz8edbuR36K7g7UxzWnYQHpGYRM1y4gURKiSSso5Rz3q9UiXfMtHqmzG5Yc8o51NDEVB83NDso4k5jAPdvXn83ZHRpdsVdcPftAA&quot;,&quot;dangerousDek&quot;:&quot;&quot;,&quot;productBrand&quot;:&quot;&quot;,&quot;dangerousHed&quot;:&quot;Hydro Flask 24-Ounce Wide Mouth Water Bottle&quot;,&quot;embedSize&quot;:null,&quot;isFirstProduct&quot;:false,&quot;isSponsored&quot;:false,&quot;offerRetailer&quot;:&quot;NORDSTROM&quot;,&quot;offerUrl&quot;:&quot;https://www.nordstrom.com/s/24-ounce-wide-mouth-water-bottle-nordstrom-exclusive/7367298&quot;,&quot;contentType&quot;:&quot;product&quot;,&quot;productId&quot;:&quot;64b6a260e2581e9fdd4cad4a&quot;,&quot;productOfferVariation&quot;:&quot;PriceOutsideCenter&quot;,&quot;showOfferUrl&quot;:false,&quot;showPriceOnButton&quot;:true,&quot;showAffiliateDisclaimerOnFirstProduct&quot;:false,&quot;dangerousCredit&quot;:null,&quot;showLocalisedOffers&quot;:true,&quot;isUpcEnabled&quot;:true,&quot;index&quot;:2,&quot;hasAffiliateLinkDisabled&quot;:false,&quot;id&quot;:&quot;64b6a260e2581e9fdd4cad4a&quot;,&quot;brand&quot;:{&quot;name&quot;:&quot;&quot;},&quot;offers&quot;:[{&quot;offerUrl&quot;:&quot;https://www.nordstrom.com/s/24-ounce-wide-mouth-water-bottle-nordstrom-exclusive/7367298&quot;,&quot;price&quot;:&quot;$47&quot;,&quot;currency&quot;:&quot;USD&quot;,&quot;purchaseUri&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3zdE3CxVJ2DP6DEJ6UMKEz8edbuR36K7g7UxzWnYQHpGYRM1y4gURKiSSso5Rz3q9UiXfMtHqmzG5Yc8o51NDEVB83NDso4k5jAPdvXn83ZHRpdsVdcPftAA&quot;,&quot;reducedPrice&quot;:&quot;$35&quot;,&quot;sellerName&quot;:&quot;NORDSTROM&quot;,&quot;countryCode&quot;:&quot;US&quot;}],&quot;component&quot;:&quot;unified_product_card&quot;}\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-include-experiments=\"true\"><div class=\"UnifiedProductCardObject-fQsetj ixCaho\"><div class=\"UnifiedProductCardHeader-dtLsXB gGCgMs\"><div class=\"UnifiedProductCardImageWrapper-cWMgfa jqqdKX\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDj8g9GYiCsBwGR3DESQzfDeMY94UcdbGKte2c9zmgvb3U4NgoWH24c8rAbXYrc23hjA5rX9dPHHmYbu2CBKxQXueSSfku9A6HfdoYe42EhvkHETK7aLmsUgpJMNU4e3gcAkM9p8EMT3svZRyPs8dFFZWbup6oRFaT1YUhZ1W4emsQ3hK\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" tabindex=\"-1\" aria-hidden=\"true\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM UnifiedProductEmbedImageLink-hEsXrK iUEiRd hHRAkO cDOurZ bkvcCN\"><span class=\"SpanWrapper-umhxW jvZaPI responsive-asset\"><picture class=\"ResponsiveImagePicture-cWuUZO dUOtEa responsive-image\" style=\"\"><img alt=\"\" class=\"ResponsiveImageContainer-eybHBd fptoWY responsive-image__image\" src=\"https://assets.vogue.com/photos/64b6a1ef6d2b1f02bbf7a8c0/3:4/w_748%2Cc_limit/slide_5.jpg\" srcset=\"https://assets.vogue.com/photos/64b6a1ef6d2b1f02bbf7a8c0/3:4/w_120,c_limit/slide_5.jpg 120w, https://assets.vogue.com/photos/64b6a1ef6d2b1f02bbf7a8c0/3:4/w_240,c_limit/slide_5.jpg 240w, https://assets.vogue.com/photos/64b6a1ef6d2b1f02bbf7a8c0/3:4/w_320,c_limit/slide_5.jpg 320w, https://assets.vogue.com/photos/64b6a1ef6d2b1f02bbf7a8c0/3:4/w_640,c_limit/slide_5.jpg 640w\" sizes=\"100vw\"></picture></span></a></div></div></div><div class=\"UnifiedProductCardBody-hDFFwy btRDdD\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardBrandName-kBReJq iUEiRd befvEX isqkVu upc-brandName\"></p><div class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardNameWrapper-fHyUwm iUEiRd ljYHRf fObZJS\"><p id=\"upc_64b6a260e2581e9fdd4cad4a\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardName-jnQGSN iUEiRd fITBRd eRESSi\">Hydro Flask 24-Ounce Wide Mouth Water Bottle</p></div><div class=\"UnifiedProductCardOfferWrapper-fQFmNV kWWqYT\"><div class=\"ProductOfferWrapper-dpcYKd UdHQo product-offer\"><div class=\"ProductOfferCtaBlock-bduvOV aRmix product-offer__cta-block\" id=\"button_label_$35NORDSTROM\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDj8g9GYiCsBwGR3DESQzfDeMY94UcdbGKte2c9zmgvb3U4NgoWH24c8rAbXYrc23hjA5rX9dPHHmYbu2CBKxQXueSSfku9A6HfdoYe42EhvkHETK7aLmsUgpJMNU4e3gcAkM9p8EMT3svZRyPs8dFFZWbup6oRFaT1YUhZ1W4emsQ3hK\" rel=\"sponsored noopener\" target=\"_blank\" aria-labelledby=\"upc_64b6a260e2581e9fdd4cad4a button_label_$35NORDSTROM\" data-buy-button=\"true\" data-offer-retailer=\"NORDSTROM\" data-offer-url=\"https://www.nordstrom.com/s/24-ounce-wide-mouth-water-bottle-nordstrom-exclusive/7367298\" class=\"BaseButton-bLlsy ButtonWrapper-xCepQ cRxydS uFkmf button button--primary-pair product-offer__buy-button\" data-event-click=\"{&quot;element&quot;:&quot;Button&quot;,&quot;outgoingURL&quot;:&quot;https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDj8g9GYiCsBwGR3DESQzfDeMY94UcdbGKte2c9zmgvb3U4NgoWH24c8rAbXYrc23hjA5rX9dPHHmYbu2CBKxQXueSSfku9A6HfdoYe42EhvkHETK7aLmsUgpJMNU4e3gcAkM9p8EMT3svZRyPs8dFFZWbup6oRFaT1YUhZ1W4emsQ3hK&quot;}\" data-testid=\"Button\" type=\"\"><span class=\"ButtonLabel-cjAuJN hzwRuG button__label\"><del>$47</del><span> $35</span> <p class=\"price-above-seller-name\">NORDSTROM</p></span></a></div></div></div></div></div></div><div class=\"GridItem-buujkM dEqBaI grid--item\"><div type=\"embed\" class=\"UnifiedProductCardWrapper-iFnytN gDPsY product-embed\" data-item=\"{&quot;ctaHref&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3u2DWa5NCj4Y3CBfhuqGcuxQkE7ERrZsKGZNPf3FhFvocVdT87GafSwSngrcdv58pCPvyHd9UjompxY5sCgWb7EWijTFeCVjFmG7r178wshXrgsVRR6vUPjk&quot;,&quot;dangerousDek&quot;:&quot;&quot;,&quot;productBrand&quot;:&quot;&quot;,&quot;dangerousHed&quot;:&quot;Larq Double Walled Self Sanitizing Water Bottle&quot;,&quot;embedSize&quot;:null,&quot;isFirstProduct&quot;:false,&quot;isSponsored&quot;:false,&quot;offerRetailer&quot;:&quot;SAKS FIFTH AVENUE&quot;,&quot;offerUrl&quot;:&quot;https://www.saksfifthavenue.com/product/larq-double-walled-self-sanitizing-water-bottle-0400012273649.html&quot;,&quot;contentType&quot;:&quot;product&quot;,&quot;productId&quot;:&quot;64b6a26000f098f3cdad3aab&quot;,&quot;productOfferVariation&quot;:&quot;PriceOutsideCenter&quot;,&quot;showOfferUrl&quot;:false,&quot;showPriceOnButton&quot;:true,&quot;showAffiliateDisclaimerOnFirstProduct&quot;:false,&quot;dangerousCredit&quot;:null,&quot;showLocalisedOffers&quot;:true,&quot;isUpcEnabled&quot;:true,&quot;index&quot;:3,&quot;hasAffiliateLinkDisabled&quot;:false,&quot;id&quot;:&quot;64b6a26000f098f3cdad3aab&quot;,&quot;brand&quot;:{&quot;name&quot;:&quot;&quot;},&quot;offers&quot;:[{&quot;offerUrl&quot;:&quot;https://www.saksfifthavenue.com/product/larq-double-walled-self-sanitizing-water-bottle-0400012273649.html&quot;,&quot;price&quot;:&quot;$99&quot;,&quot;currency&quot;:&quot;USD&quot;,&quot;purchaseUri&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3u2DWa5NCj4Y3CBfhuqGcuxQkE7ERrZsKGZNPf3FhFvocVdT87GafSwSngrcdv58pCPvyHd9UjompxY5sCgWb7EWijTFeCVjFmG7r178wshXrgsVRR6vUPjk&quot;,&quot;sellerName&quot;:&quot;SAKS FIFTH AVENUE&quot;,&quot;countryCode&quot;:&quot;US&quot;,&quot;reducedPrice&quot;:&quot;&quot;}],&quot;component&quot;:&quot;unified_product_card&quot;}\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-include-experiments=\"true\"><div class=\"UnifiedProductCardObject-fQsetj ixCaho\"><div class=\"UnifiedProductCardHeader-dtLsXB gGCgMs\"><div class=\"UnifiedProductCardImageWrapper-cWMgfa jqqdKX\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDdi51yvGDoyBURBLbDYxiqUBYNAuA4RMj4NADXxtQhDj7pSvzhAf8rUuf6cCVtxX7kfBFTnhj19m3DZceXHgNN1x8xzwnN1y2xrT4xc4JTFSikNGjbXFpBWW6LwpPfdkYHVNFyD4G8R1sQcgHRTqgrZXKgDrTrZRQopv38JUv7cD3guo\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" tabindex=\"-1\" aria-hidden=\"true\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM UnifiedProductEmbedImageLink-hEsXrK iUEiRd hHRAkO cDOurZ bkvcCN\"><span class=\"SpanWrapper-umhxW jvZaPI responsive-asset\"><picture class=\"ResponsiveImagePicture-cWuUZO dUOtEa responsive-image\" style=\"\"><img alt=\"\" class=\"ResponsiveImageContainer-eybHBd fptoWY responsive-image__image\" src=\"https://assets.vogue.com/photos/64b6a1f006ac0df427c1d2ff/3:4/w_748%2Cc_limit/slide_4.jpg\" srcset=\"https://assets.vogue.com/photos/64b6a1f006ac0df427c1d2ff/3:4/w_120,c_limit/slide_4.jpg 120w, https://assets.vogue.com/photos/64b6a1f006ac0df427c1d2ff/3:4/w_240,c_limit/slide_4.jpg 240w, https://assets.vogue.com/photos/64b6a1f006ac0df427c1d2ff/3:4/w_320,c_limit/slide_4.jpg 320w, https://assets.vogue.com/photos/64b6a1f006ac0df427c1d2ff/3:4/w_640,c_limit/slide_4.jpg 640w\" sizes=\"100vw\"></picture></span></a></div></div></div><div class=\"UnifiedProductCardBody-hDFFwy btRDdD\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardBrandName-kBReJq iUEiRd befvEX isqkVu upc-brandName\"></p><div class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardNameWrapper-fHyUwm iUEiRd ljYHRf fObZJS\"><p id=\"upc_64b6a26000f098f3cdad3aab\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardName-jnQGSN iUEiRd fITBRd eRESSi\">Larq Double Walled Self Sanitizing Water Bottle</p></div><div class=\"UnifiedProductCardOfferWrapper-fQFmNV kWWqYT\"><div class=\"ProductOfferWrapper-dpcYKd UdHQo product-offer\"><div class=\"ProductOfferCtaBlock-bduvOV aRmix product-offer__cta-block\" id=\"button_label_$99SAKSFIFTHAVENUE\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDdi51yvGDoyBURBLbDYxiqUBYNAuA4RMj4NADXxtQhDj7pSvzhAf8rUuf6cCVtxX7kfBFTnhj19m3DZceXHgNN1x8xzwnN1y2xrT4xc4JTFSikNGjbXFpBWW6LwpPfdkYHVNFyD4G8R1sQcgHRTqgrZXKgDrTrZRQopv38JUv7cD3guo\" rel=\"sponsored noopener\" target=\"_blank\" aria-labelledby=\"upc_64b6a26000f098f3cdad3aab button_label_$99SAKSFIFTHAVENUE\" data-buy-button=\"true\" data-offer-retailer=\"SAKS FIFTH AVENUE\" data-offer-url=\"https://www.saksfifthavenue.com/product/larq-double-walled-self-sanitizing-water-bottle-0400012273649.html\" class=\"BaseButton-bLlsy ButtonWrapper-xCepQ cRxydS uFkmf button button--primary-pair product-offer__buy-button\" data-event-click=\"{&quot;element&quot;:&quot;Button&quot;,&quot;outgoingURL&quot;:&quot;https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDdi51yvGDoyBURBLbDYxiqUBYNAuA4RMj4NADXxtQhDj7pSvzhAf8rUuf6cCVtxX7kfBFTnhj19m3DZceXHgNN1x8xzwnN1y2xrT4xc4JTFSikNGjbXFpBWW6LwpPfdkYHVNFyD4G8R1sQcgHRTqgrZXKgDrTrZRQopv38JUv7cD3guo&quot;}\" data-testid=\"Button\" type=\"\"><span class=\"ButtonLabel-cjAuJN hzwRuG button__label\"><span>$99</span> <p class=\"price-above-seller-name\">SAKS FIFTH AVENUE</p></span></a></div></div></div></div></div></div></div><h2>Drink coconut water</h2><p>“For centuries, people in Southeast Asian and Pacific Island countries have been drinking the water from young coconuts for hydration,” Snyder explains. “It’s one of the best ways to replace the water and electrolytes the body gives off in hot climates.” So after a long day in the sun (<em>or</em> the morning after a long night out), try supplementing your water intake with the popular island thirst quencher.</p><div class=\"GridWrapper-cAzTTK fnZLGI grid grid-even grid-items-2 GroupCalloutWrapper-bPWknp djAzDO callout callout--group callout--group-2\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;GroupCallout&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;GroupCallout&quot;}\" data-include-experiments=\"true\"><div class=\"GridItem-buujkM dEqBaI grid--item\"><div type=\"embed\" class=\"UnifiedProductCardWrapper-iFnytN gDPsY product-embed\" data-item=\"{&quot;ctaHref&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3zXG951fePAot8t4KL9bZoJy8JK7ctWfF7eBefKoERH7TFapMbWiwTZyzxqQmtvhVw9AvgAHyL4EmwgdqZUbqLCkjuzqpYvmCbnit9wwLeoRnF7RdpBdukv2&quot;,&quot;dangerousDek&quot;:&quot;&quot;,&quot;productBrand&quot;:&quot;&quot;,&quot;dangerousHed&quot;:&quot;Harmless Harvest Organic Coconut Water Drink - 12 Pack&quot;,&quot;embedSize&quot;:null,&quot;isFirstProduct&quot;:false,&quot;isSponsored&quot;:false,&quot;offerRetailer&quot;:&quot;AMAZON&quot;,&quot;offerUrl&quot;:&quot;https://www.amazon.com/Harmless-Harvest-Hydrating-Natural-Electrolytes/dp/B08HX9M9SP/&quot;,&quot;contentType&quot;:&quot;product&quot;,&quot;productId&quot;:&quot;64b6a260d9567128b7130014&quot;,&quot;productOfferVariation&quot;:&quot;PriceOutsideCenter&quot;,&quot;showOfferUrl&quot;:false,&quot;showPriceOnButton&quot;:true,&quot;showAffiliateDisclaimerOnFirstProduct&quot;:false,&quot;dangerousCredit&quot;:null,&quot;showLocalisedOffers&quot;:true,&quot;isUpcEnabled&quot;:true,&quot;index&quot;:4,&quot;hasAffiliateLinkDisabled&quot;:false,&quot;id&quot;:&quot;64b6a260d9567128b7130014&quot;,&quot;brand&quot;:{&quot;name&quot;:&quot;&quot;},&quot;offers&quot;:[{&quot;offerUrl&quot;:&quot;https://www.amazon.com/Harmless-Harvest-Hydrating-Natural-Electrolytes/dp/B08HX9M9SP/&quot;,&quot;price&quot;:&quot;$50&quot;,&quot;currency&quot;:&quot;USD&quot;,&quot;purchaseUri&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3zXG951fePAot8t4KL9bZoJy8JK7ctWfF7eBefKoERH7TFapMbWiwTZyzxqQmtvhVw9AvgAHyL4EmwgdqZUbqLCkjuzqpYvmCbnit9wwLeoRnF7RdpBdukv2&quot;,&quot;sellerName&quot;:&quot;AMAZON&quot;,&quot;countryCode&quot;:&quot;US&quot;,&quot;reducedPrice&quot;:&quot;&quot;}],&quot;component&quot;:&quot;unified_product_card&quot;}\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-include-experiments=\"true\"><div class=\"UnifiedProductCardObject-fQsetj ixCaho\"><div class=\"UnifiedProductCardHeader-dtLsXB gGCgMs\"><div class=\"UnifiedProductCardImageWrapper-cWMgfa jqqdKX\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDj2uKKPYs8dzZjm46E4Di1M7NGHgG2RciAUK2YfJYD5FAh99wDXTj88F6cecnHDYgCn14X879Wn1F8g1U26NVgRKjzwtrwZ1CbdeRKdwLsJoseL95e29qW8Pdd9rvEvjfbfSt4QTAJKhuvysPJRZANrhKAohAhtcSAq4ntcYeHADwY49\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" tabindex=\"-1\" aria-hidden=\"true\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM UnifiedProductEmbedImageLink-hEsXrK iUEiRd hHRAkO cDOurZ bkvcCN\"><span class=\"SpanWrapper-umhxW jvZaPI responsive-asset\"><picture class=\"ResponsiveImagePicture-cWuUZO dUOtEa responsive-image\" style=\"\"><img alt=\"\" class=\"ResponsiveImageContainer-eybHBd fptoWY responsive-image__image\" src=\"https://assets.vogue.com/photos/64b6a1f13aba367d59cd8e96/3:4/w_748%2Cc_limit/slide_6.jpg\" srcset=\"https://assets.vogue.com/photos/64b6a1f13aba367d59cd8e96/3:4/w_120,c_limit/slide_6.jpg 120w, https://assets.vogue.com/photos/64b6a1f13aba367d59cd8e96/3:4/w_240,c_limit/slide_6.jpg 240w, https://assets.vogue.com/photos/64b6a1f13aba367d59cd8e96/3:4/w_320,c_limit/slide_6.jpg 320w, https://assets.vogue.com/photos/64b6a1f13aba367d59cd8e96/3:4/w_640,c_limit/slide_6.jpg 640w\" sizes=\"100vw\"></picture></span></a></div></div></div><div class=\"UnifiedProductCardBody-hDFFwy btRDdD\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardBrandName-kBReJq iUEiRd befvEX isqkVu upc-brandName\"></p><div class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardNameWrapper-fHyUwm iUEiRd ljYHRf fObZJS\"><p id=\"upc_64b6a260d9567128b7130014\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardName-jnQGSN iUEiRd fITBRd eRESSi\">Harmless Harvest Organic Coconut Water Drink - 12 Pack</p></div><div class=\"UnifiedProductCardOfferWrapper-fQFmNV kWWqYT\"><div class=\"ProductOfferWrapper-dpcYKd UdHQo product-offer\"><div class=\"ProductOfferCtaBlock-bduvOV aRmix product-offer__cta-block\" id=\"button_label_$50AMAZON\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDj2uKKPYs8dzZjm46E4Di1M7NGHgG2RciAUK2YfJYD5FAh99wDXTj88F6cecnHDYgCn14X879Wn1F8g1U26NVgRKjzwtrwZ1CbdeRKdwLsJoseL95e29qW8Pdd9rvEvjfbfSt4QTAJKhuvysPJRZANrhKAohAhtcSAq4ntcYeHADwY49\" rel=\"sponsored noopener\" target=\"_blank\" aria-labelledby=\"upc_64b6a260d9567128b7130014 button_label_$50AMAZON\" data-buy-button=\"true\" data-offer-retailer=\"AMAZON\" data-offer-url=\"https://www.amazon.com/Harmless-Harvest-Hydrating-Natural-Electrolytes/dp/B08HX9M9SP/\" class=\"BaseButton-bLlsy ButtonWrapper-xCepQ cRxydS uFkmf button button--primary-pair product-offer__buy-button\" data-event-click=\"{&quot;element&quot;:&quot;Button&quot;,&quot;outgoingURL&quot;:&quot;https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDj2uKKPYs8dzZjm46E4Di1M7NGHgG2RciAUK2YfJYD5FAh99wDXTj88F6cecnHDYgCn14X879Wn1F8g1U26NVgRKjzwtrwZ1CbdeRKdwLsJoseL95e29qW8Pdd9rvEvjfbfSt4QTAJKhuvysPJRZANrhKAohAhtcSAq4ntcYeHADwY49&quot;}\" data-testid=\"Button\" type=\"\"><span class=\"ButtonLabel-cjAuJN hzwRuG button__label\"><span>$50</span> <p class=\"price-above-seller-name\">AMAZON</p></span></a></div></div></div></div></div></div><div class=\"GridItem-buujkM dEqBaI grid--item\"><div type=\"embed\" class=\"UnifiedProductCardWrapper-iFnytN gDPsY product-embed\" data-item=\"{&quot;ctaHref&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3u8WaLNk9NzxQBbmpx76BNA6RqHxzthNahk66zMcqhkpwJjbheeDFAEihMbAfPwRmQPZUMdkx1Y81HSjvHQSh8MABPvViarSKBvSt2hmFo91oagoNxVHNuci&quot;,&quot;dangerousDek&quot;:&quot;&quot;,&quot;productBrand&quot;:&quot;&quot;,&quot;dangerousHed&quot;:&quot;Vita Coco Coconut Water&quot;,&quot;embedSize&quot;:null,&quot;isFirstProduct&quot;:false,&quot;isSponsored&quot;:false,&quot;offerRetailer&quot;:&quot;AMAZON&quot;,&quot;offerUrl&quot;:&quot;https://www.amazon.com/Vita-Coco-Organic-Coconut-Water/dp/B07DJ16CD6/&quot;,&quot;contentType&quot;:&quot;product&quot;,&quot;productId&quot;:&quot;64b6a2601723709f8530bcda&quot;,&quot;productOfferVariation&quot;:&quot;PriceOutsideCenter&quot;,&quot;showOfferUrl&quot;:false,&quot;showPriceOnButton&quot;:true,&quot;showAffiliateDisclaimerOnFirstProduct&quot;:false,&quot;dangerousCredit&quot;:null,&quot;showLocalisedOffers&quot;:true,&quot;isUpcEnabled&quot;:true,&quot;index&quot;:5,&quot;hasAffiliateLinkDisabled&quot;:false,&quot;id&quot;:&quot;64b6a2601723709f8530bcda&quot;,&quot;brand&quot;:{&quot;name&quot;:&quot;&quot;},&quot;offers&quot;:[{&quot;offerUrl&quot;:&quot;https://www.amazon.com/Vita-Coco-Organic-Coconut-Water/dp/B07DJ16CD6/&quot;,&quot;price&quot;:&quot;$17&quot;,&quot;currency&quot;:&quot;USD&quot;,&quot;purchaseUri&quot;:&quot;https://cna.st/p/2h8zKZvUAqv9ZDfY8x2A3otoT38fYH8YBFGx1np8LNwY1VyNUUrZPtGRAh3u8WaLNk9NzxQBbmpx76BNA6RqHxzthNahk66zMcqhkpwJjbheeDFAEihMbAfPwRmQPZUMdkx1Y81HSjvHQSh8MABPvViarSKBvSt2hmFo91oagoNxVHNuci&quot;,&quot;sellerName&quot;:&quot;AMAZON&quot;,&quot;countryCode&quot;:&quot;US&quot;,&quot;reducedPrice&quot;:&quot;&quot;}],&quot;component&quot;:&quot;unified_product_card&quot;}\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;UnifiedProductCard&quot;}\" data-include-experiments=\"true\"><div class=\"UnifiedProductCardObject-fQsetj ixCaho\"><div class=\"UnifiedProductCardHeader-dtLsXB gGCgMs\"><div class=\"UnifiedProductCardImageWrapper-cWMgfa jqqdKX\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDdpAPyckFxVccyR4ABc2KezF7crUpfwXazwL6XXF8NgNhaXoFywi7D2SFn6qH4VyRZfyCHjnVK7HqxbTxgPmPohMabzouLRLgprWMwGZoyruV4oUQZTxmMAiP3QeXohrhCjTh1t6oJ9PGAmAVkJdsd1yCF7LGueNFiBG27vdS3vF2oN1\" target=\"_blank\" rel=\"noreferrer noopener sponsored\" tabindex=\"-1\" aria-hidden=\"true\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM UnifiedProductEmbedImageLink-hEsXrK iUEiRd hHRAkO cDOurZ bkvcCN\"><span class=\"SpanWrapper-umhxW jvZaPI responsive-asset\"><picture class=\"ResponsiveImagePicture-cWuUZO dUOtEa responsive-image\" style=\"\"><img alt=\"\" class=\"ResponsiveImageContainer-eybHBd fptoWY responsive-image__image\" src=\"https://assets.vogue.com/photos/64b6a1eef89668452743b93a/3:4/w_748%2Cc_limit/slide_2.jpg\" srcset=\"https://assets.vogue.com/photos/64b6a1eef89668452743b93a/3:4/w_120,c_limit/slide_2.jpg 120w, https://assets.vogue.com/photos/64b6a1eef89668452743b93a/3:4/w_240,c_limit/slide_2.jpg 240w, https://assets.vogue.com/photos/64b6a1eef89668452743b93a/3:4/w_320,c_limit/slide_2.jpg 320w, https://assets.vogue.com/photos/64b6a1eef89668452743b93a/3:4/w_640,c_limit/slide_2.jpg 640w\" sizes=\"100vw\"></picture></span></a></div></div></div><div class=\"UnifiedProductCardBody-hDFFwy btRDdD\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardBrandName-kBReJq iUEiRd befvEX isqkVu upc-brandName\"></p><div class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardNameWrapper-fHyUwm iUEiRd ljYHRf fObZJS\"><p id=\"upc_64b6a2601723709f8530bcda\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ UnifiedProductCardName-jnQGSN iUEiRd fITBRd eRESSi\">Vita Coco Coconut Water</p></div><div class=\"UnifiedProductCardOfferWrapper-fQFmNV kWWqYT\"><div class=\"ProductOfferWrapper-dpcYKd UdHQo product-offer\"><div class=\"ProductOfferCtaBlock-bduvOV aRmix product-offer__cta-block\" id=\"button_label_$17AMAZON\"><a href=\"https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDdpAPyckFxVccyR4ABc2KezF7crUpfwXazwL6XXF8NgNhaXoFywi7D2SFn6qH4VyRZfyCHjnVK7HqxbTxgPmPohMabzouLRLgprWMwGZoyruV4oUQZTxmMAiP3QeXohrhCjTh1t6oJ9PGAmAVkJdsd1yCF7LGueNFiBG27vdS3vF2oN1\" rel=\"sponsored noopener\" target=\"_blank\" aria-labelledby=\"upc_64b6a2601723709f8530bcda button_label_$17AMAZON\" data-buy-button=\"true\" data-offer-retailer=\"AMAZON\" data-offer-url=\"https://www.amazon.com/Vita-Coco-Organic-Coconut-Water/dp/B07DJ16CD6/\" class=\"BaseButton-bLlsy ButtonWrapper-xCepQ cRxydS uFkmf button button--primary-pair product-offer__buy-button\" data-event-click=\"{&quot;element&quot;:&quot;Button&quot;,&quot;outgoingURL&quot;:&quot;https://cna.st/p/2dznjpHfDESnKzRd6XmRsX9zymJmY4YpGHqiTuM7HoCesB42SLYqXV9X2SDdpAPyckFxVccyR4ABc2KezF7crUpfwXazwL6XXF8NgNhaXoFywi7D2SFn6qH4VyRZfyCHjnVK7HqxbTxgPmPohMabzouLRLgprWMwGZoyruV4oUQZTxmMAiP3QeXohrhCjTh1t6oJ9PGAmAVkJdsd1yCF7LGueNFiBG27vdS3vF2oN1&quot;}\" data-testid=\"Button\" type=\"\"><span class=\"ButtonLabel-cjAuJN hzwRuG button__label\"><span>$17</span> <p class=\"price-above-seller-name\">AMAZON</p></span></a></div></div></div></div></div></div></div><h2>Reduce the ultra-processed foods in your diet</h2><p>Ultra-processed foods have been getting a lot of attention in the media recently–they have been linked to 32 negative health outcomes, from higher risk of cancer and heart disease to diabetes and poor mental health. They’re also “unnaturally high in sodium and sugar, and low in water – the perfect storm when it comes to dehydration,” explains Stephenson. “They have also been shown to increase inflammation, which also affects our hydration status.”</p></div></div></div><div class=\"GridItem-buujkM fVLMby grid--item grid-layout__aside\"><div class=\"StickyBoxWrapper-jfYBuk kNleGZ sticky-box\"><div class=\"StickyBoxPrimary-dzWDWL cdhYoN sticky-box__primary\"><div class=\"Container-bkChBi byNLHx\" data-event-boundary=\"click\" data-event-click=\"{&quot;pattern&quot;:&quot;CNEInterludeEmbed&quot;}\" data-in-view=\"{&quot;pattern&quot;:&quot;CNEInterludeEmbed&quot;}\" data-include-experiments=\"true\"><figure data-testid=\"cne-interlude-container-right-rail\" class=\"VideoFigure-eayQIa hlYxds\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ InterludeHeader-jpfboO iUEiRd befvEX kqXlDN\">WATCH</p><figure class=\"CneVideoEmbedFigure-kCfJjN cJhmup cne-video-embed\"><div data-testid=\"script-container\"><div style=\"box-sizing:content-box;display:inline-block;height:0px;padding-top:56.25%;position:relative;transition:height 300ms ease-in-out;vertical-align:top;width:100%;\" class=\"cne-player-container\" id=\"1e19d80c-a17d-e152-6bb9-8802bcb5ba30\"></div></div></figure><a rel=\"noopener noreferrer\" target=\"_blank\" aria-label=\"Opens in a new window\" href=\"https://www.vogue.com/video/watch/objects-of-affection-gisele-bundchen\" class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ BaseLink-eNWuiM InterludeTitleLink-cHlEVd iUEiRd iTPcPG hRaEiJ kyAPDp\"><p class=\"BaseWrap-sc-gjQpdd BaseText-ewhhUZ InterludeRightRailTitle-blOXVD iUEiRd eRFOub kBtFGm\">Go Inside Gisele Bündchen’s New Miami Home—And See Her Most Prized Possessions</p></a></figure></div><div class=\"AdWrapper-dQtivb fZrssQ ad hapio\" style=\"\"><div class=\"ad__slot ad__slot--rail\" data-node-id=\"wz2mbh\"></div></div><div class=\"ConsumerMarketingUnitThemedWrapper-iUTMTf jssHut consumer-marketing-unit consumer-marketing-unit--display-rail\" role=\"presentation\" aria-hidden=\"true\"><div class=\"consumer-marketing-unit__slot consumer-marketing-unit__slot--display-rail\"></div><div class=\"journey-unit\"></div></div></div></main>";
+</script>
