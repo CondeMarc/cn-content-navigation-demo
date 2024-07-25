@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -202,27 +203,32 @@
     width:auto;
     z-index:1;
   }
-  .editor-row .delete, .link {
+  .editor-row .toolbox {
+    position: absolute;
+    bottom:0.4rem;
+    right:6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .7);
+    z-index:2;
+    padding:.4rem;
+  }
+  .editor-row .delete, .editor-row .link, .editor-row .cursor {
     display:inline-block;
-    width:20px;
-    height:20px;
+    width:15px;
+    height:15px;
+    margin:0 3px;
     background-image: url("data:image/svg+xml,%3Csvg clip-rule='evenodd' fill-rule='evenodd' stroke-linejoin='round' stroke-miterlimit='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m4.015 5.494h-.253c-.413 0-.747-.335-.747-.747s.334-.747.747-.747h5.253v-1c0-.535.474-1 1-1h4c.526 0 1 .465 1 1v1h5.254c.412 0 .746.335.746.747s-.334.747-.746.747h-.254v15.435c0 .591-.448 1.071-1 1.071-2.873 0-11.127 0-14 0-.552 0-1-.48-1-1.071zm14.5 0h-13v15.006h13zm-4.25 2.506c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm-4.5 0c-.414 0-.75.336-.75.75v8.5c0 .414.336.75.75.75s.75-.336.75-.75v-8.5c0-.414-.336-.75-.75-.75zm3.75-4v-.5h-3v.5z' fill-rule='nonzero'/%3E%3C/svg%3E");
     background-repeat: no-repeat no-repeat;
     background-position: center center;
     background-size: cover;
-    position: absolute;
-    bottom:0;
-    right:0;
-    z-index:2;
+  }
+  .editor-row .cursor {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M24 12l-6-5v4h-5v-5h4l-5-6-5 6h4v5h-5v-4l-6 5 6 5v-4h5v5h-4l5 6 5-6h-4v-5h5v4z'/%3E%3C/svg%3E");
   }
   .editor-row .link {
-	right:30px;
-	width:18px;
-	height:18px;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M13.723 18.654l-3.61 3.609c-2.316 2.315-6.063 2.315-8.378 0-1.12-1.118-1.735-2.606-1.735-4.188 0-1.582.615-3.07 1.734-4.189l4.866-4.865c2.355-2.355 6.114-2.262 8.377 0 .453.453.81.973 1.089 1.527l-1.593 1.592c-.18-.613-.5-1.189-.964-1.652-1.448-1.448-3.93-1.51-5.439-.001l-.001.002-4.867 4.865c-1.5 1.499-1.5 3.941 0 5.44 1.517 1.517 3.958 1.488 5.442 0l2.425-2.424c.993.284 1.791.335 2.654.284zm.161-16.918l-3.574 3.576c.847-.05 1.655 0 2.653.283l2.393-2.389c1.498-1.502 3.94-1.5 5.44-.001 1.517 1.518 1.486 3.959 0 5.442l-4.831 4.831-.003.002c-1.438 1.437-3.886 1.552-5.439-.002-.473-.474-.785-1.042-.956-1.643l-.084.068-1.517 1.515c.28.556.635 1.075 1.088 1.528 2.245 2.245 6.004 2.374 8.378 0l4.832-4.831c2.314-2.316 2.316-6.062-.001-8.377-2.317-2.321-6.067-2.313-8.379-.002z'/%3E%3C/svg%3E");
-	background-repeat: no-repeat no-repeat;
-	background-position: center center;
-	background-size: cover;
+    width:13px;
+    height:13px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M13.723 18.654l-3.61 3.609c-2.316 2.315-6.063 2.315-8.378 0-1.12-1.118-1.735-2.606-1.735-4.188 0-1.582.615-3.07 1.734-4.189l4.866-4.865c2.355-2.355 6.114-2.262 8.377 0 .453.453.81.973 1.089 1.527l-1.593 1.592c-.18-.613-.5-1.189-.964-1.652-1.448-1.448-3.93-1.51-5.439-.001l-.001.002-4.867 4.865c-1.5 1.499-1.5 3.941 0 5.44 1.517 1.517 3.958 1.488 5.442 0l2.425-2.424c.993.284 1.791.335 2.654.284zm.161-16.918l-3.574 3.576c.847-.05 1.655 0 2.653.283l2.393-2.389c1.498-1.502 3.94-1.5 5.44-.001 1.517 1.518 1.486 3.959 0 5.442l-4.831 4.831-.003.002c-1.438 1.437-3.886 1.552-5.439-.002-.473-.474-.785-1.042-.956-1.643l-.084.068-1.517 1.515c.28.556.635 1.075 1.088 1.528 2.245 2.245 6.004 2.374 8.378 0l4.832-4.831c2.314-2.316 2.316-6.062-.001-8.377-2.317-2.321-6.067-2.313-8.379-.002z'/%3E%3C/svg%3E");
   }
   #editor input[type=text] {
     border: 0;
@@ -248,6 +254,24 @@
   }
   p {
     line-height:1rem;
+  }
+  body.dragging, body.dragging * {
+    cursor: move !important;
+  }
+
+  .dragged {
+    position: absolute;
+    opacity: 0.5;
+    z-index: 2000;
+  }
+
+  #editor li.placeholder {
+    position: relative;
+    /** More li styles **/
+  }
+  #editor li.placeholder:before {
+    position: absolute;
+    /** Define arrowhead **/
   }
   </style>
 </head>
@@ -314,8 +338,11 @@
       <input type="text" name="row[][description]" placeholder="Description" data-value="description" oninput="change(this)" data-template-bind='[{"attribute": "data-id", "value": "id"}]' data-binding="description">
       <input type="text" name="row[][label]" placeholder="Label" data-binding="label" data-value="label" oninput="change(this)" data-template-bind='[{"attribute": "data-id", "value": "id"}]'>
       <img src="" data-src="image" data-format="productImageFormatter">
-      <a href="javascript:alert('not implemented');" class="delete"></a>
-	  <a href="javascript:alert('show copilot link modal');" class="link"></a>
+      <div class="toolbox columns">
+         <a style="cursor:move" class="cursor"></a>
+        <a href="javascript:alert('not implemented');" class="delete"></a>
+	      <a href="javascript:alert('show copilot link modal');" class="link"></a>
+      </div>
     </div>
   </script>
 
@@ -339,7 +366,8 @@
       <div class="jumplink productsummarygrid">
         <h5 data-content="hed"></h5>
         <p data-content="description"></p>
-        <button href="#" data-content="label"></button>
+        <p><a href="#" data-content="label">read review</a></p>
+        <button href="#" data-content="affiliatelink">Affiliate Link 99$</button>
         <img src="" data-src="image" data-format="productImageFormatter">
       </div>
     </script>
@@ -349,9 +377,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.loadtemplate/1.5.10/jquery.loadTemplate.min.js"
     integrity="sha512-T1zx+UG2gXu9mr29wvzaKkNUmAOAie40T32ZPIvcRPJgO5br53+Ocqj8gzguUuix7FK+Z3ncRCJMaZcumnPZzg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sortable/0.9.13/jquery-sortable-min.js" integrity="sha512-9pm50HHbDIEyz2RV/g2tn1ZbBdiTlgV7FwcQhIhvykX6qbQitydd6rF19iLmOqmJVUYq90VL2HiIUHjUMQA5fw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     //https://www.vogue.com/article/tips-for-staying-hydrated-nutritionist
   let data = [];
+  let sortableList = null;
   $.addTemplateFormatter('productImageFormatter',
     (value, template) => {
       if (value && value !== undefined && value != '') {
@@ -371,6 +401,7 @@
     );
     $('#editor').loadTemplate($('#editor-row-template'), data);
     preview();
+    sortableList.sortable('refresh');
   });
     $('#addProduct').click((e) => {
       e.preventDefault();
@@ -380,10 +411,12 @@
           hed: 'New Product',
           auto: false,
           type: 'product',
+          affiliatelink: 'Network - $xx',
         }
       );
       $('#editor').loadTemplate($('#editor-row-template'), data);
       preview();
+      sortableList.sortable('refresh');
     });
   $('#autoFillParagraph').click((e) => {
     e.preventDefault();
@@ -402,6 +435,7 @@
     });
     $('#editor').loadTemplate($('#editor-row-template'),data);
     preview();
+    sortableList.sortable('refresh');
   });
   $('#autoFillProduct').click((e) => {
     e.preventDefault();
@@ -411,15 +445,18 @@
         {
           id: uid(),
           hed: $(el).find("[class^='.UnifiedProductCardName-'], [class*=' UnifiedProductCardName-']").html(),
-          label: $(el).find('.product-offer__cta-block').first().find('p').html(),
+          description: $(el).find('.UnifiedProductCardNameWrapper-fHyUwm p').html(),
+          label: 'read review',
           image: $(el).find('img').attr('src'),
           type: 'product',
           auto: true,
+          affiliatelink: $(el).find('.button__label span').first().html() + ' - ' + $(el).find('.price-above-seller-name').first().html(),
         }
       );
     });
     $('#editor').loadTemplate($('#editor-row-template'), data);
     preview();
+    sortableList.sortable('refresh');
   });
 
   $('#refresh').click((e) => {
@@ -469,18 +506,38 @@
   };
   
   const clearAll = () => {
-	if (confirm('Clear all?') == true) {
-	  data = [];
-	  $('#editor').loadTemplate($('#editor-row-template'),data);
-	  preview();
-	} 
-	return false;
+    if (confirm('Clear all?') == true) {
+      data = [];
+      $('#editor').loadTemplate($('#editor-row-template'),data);
+      preview();
+    } 
+    return false;
   }
+
+  let oldIndex;
+  $(function() {
+    sortableList = $('#editor').sortable({
+      itemSelector: '.editor-row',
+      containerSelector: '#editor',
+      onDragStart: function ($item, container, _super) {
+        oldIndex = $item.index();
+        _super($item, container);
+      },
+      onDrop: function ($item, container, _super, event) {
+        _super($item, container);
+        let moveEl = data.splice(oldIndex, 1);
+        data = [
+            ...data.slice(0, $item.index()),
+            moveEl,
+            ...data.slice($item.index())
+        ];
+        preview();
+      }
+    });
+  });
   </script>
 </body>
 </html>
-
-
 
 
 
