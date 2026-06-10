@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CP — Unassigned bucket with many contributors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #3D5AFE;
+  --blue-dark: #2a3eb1;
+  --green-bg: #a7e0a3;
+  --green-text: #1d4220;
+  --gray-bg: #e8e8e8;
+  --gray-text: #525252;
+  --amber-bg: #fff4d6;
+  --amber-border: #e6b84a;
+  --amber-text: #8a6200;
+  --text: #161616;
+  --text-2: #525252;
+  --text-3: #8d8d8d;
+  --border: #e0e0e0;
+  --bg: #f4f4f4;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 32px 24px 80px;
+}
+.page { max-width: 1180px; margin: 0 auto; }
+p { margin: 0; }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+}
+.card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+h1 { font-size: 28px; font-weight: 600; margin: 0; }
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 18px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { background: var(--blue-dark); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.pill {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--green-bg);
+  color: var(--green-text);
+  white-space: nowrap;
+}
+.pill.gray { background: var(--gray-bg); color: var(--gray-text); }
+
+.contrib-row {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1.5fr) 1fr 1fr 60px;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 6px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  font-size: 14px;
+}
+.contrib-row.droptarget { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(61,90,254,0.25); }
+.c-name { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+.c-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--gray-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: var(--gray-text);
+  flex-shrink: 0;
+}
+.c-meta { color: var(--text-2); font-size: 13px; }
+.c-count { text-align: right; color: var(--text-2); font-size: 13px; }
+
+.bucket {
+  background: var(--amber-bg);
+  border: 1.5px dashed var(--amber-border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+}
+.bucket-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.bucket-title { font-size: 16px; font-weight: 700; color: var(--amber-text); display: flex; align-items: center; gap: 8px; }
+.bucket-sub { font-size: 13px; color: var(--amber-text); margin-top: 3px; max-width: 560px; }
+.bucket-count { background: var(--amber-text); color: #fff; border-radius: 999px; font-size: 13px; font-weight: 700; padding: 1px 10px; }
+.assign-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.assign-controls select {
+  font-family: inherit; font-size: 14px;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  min-width: 210px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 10px;
+  padding: 4px;
+  border-radius: 8px;
+  min-height: 50px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.grid.droptarget { background: rgba(61,90,254,0.06); box-shadow: 0 0 0 2px rgba(61,90,254,0.35); }
+
+.thumb {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.thumb-label {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.55);
+  color: #fff; font-size: 10px; font-weight: 600;
+  padding: 4px 22px 4px 6px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.thumb input[type=checkbox] {
+  position: absolute; right: 5px; bottom: 5px;
+  width: 14px; height: 14px;
+  accent-color: var(--blue);
+}
+.thumb.unassigned { cursor: grab; border: 1.5px solid var(--amber-border); }
+.thumb.unassigned:active { cursor: grabbing; }
+.thumb.dragging { opacity: 0.4; }
+
+.group {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.group.droptarget { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(61,90,254,0.25); }
+.group-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.group-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.group-meta { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 12px; }
+.chev { transition: transform 0.15s; color: var(--text-3); }
+.group.open .chev { transform: rotate(180deg); }
+.group-body { display: none; padding: 0 16px 14px; }
+.group.open .group-body { display: block; }
+.gbadge {
+  background: var(--gray-bg); color: var(--gray-text);
+  border-radius: 999px; font-size: 12px; font-weight: 700; padding: 1px 9px;
+}
+
+.toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(20px);
+  background: var(--text); color: #fff;
+  font-size: 14px; font-weight: 500;
+  padding: 12px 20px; border-radius: 8px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  display: flex; align-items: center; gap: 10px;
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast .ok { color: #7be29a; }
+
+.g1 { background: linear-gradient(135deg, #c8b6a6, #5e4b3c); }
+.g2 { background: linear-gradient(135deg, #a6b8c8, #3c4e5e); }
+.g3 { background: linear-gradient(135deg, #c8a6a6, #5e3c3c); }
+.g4 { background: linear-gradient(135deg, #b0c8a6, #465e3c); }
+.g5 { background: linear-gradient(135deg, #c0a6c8, #543c5e); }
+.g6 { background: linear-gradient(135deg, #a6c8c4, #3c5e5a); }
+.g7 { background: linear-gradient(135deg, #c8c2a6, #5e573c); }
+.g8 { background: linear-gradient(135deg, #9fb6d4, #2f4868); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="card">
+    <div class="card-head">
+      <h1>Contributors</h1>
+      <button class="btn-primary"><span style="font-size:16px;">&#8853;</span> Add Contributor</button>
+    </div>
+    <div id="contribList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h1>Assets</h1></div>
+
+    <div class="bucket" id="bucket">
+      <div class="bucket-head">
+        <div>
+          <p class="bucket-title">&#9888; Unassigned <span class="bucket-count" id="bucketCount">5</span></p>
+          <p class="bucket-sub">Uploaded in Copilot without rights. Blocked from syndication until assigned. Drag onto a contributor or asset group, or select and assign below.</p>
+        </div>
+        <div class="assign-controls">
+          <select id="assignTarget">
+            <option value="">Assign selected to&hellip;</option>
+          </select>
+          <button class="btn-primary" id="bulkAssign" disabled>Assign</button>
+        </div>
+      </div>
+      <div class="grid" id="unassignedGrid">
+        <div class="thumb unassigned g5" draggable="true" data-name="9-backstage-look4.jpg"><span class="thumb-label">9-backstage-look4.jpg</span><input type="checkbox" aria-label="Select 9-backstage-look4.jpg"></div>
+        <div class="thumb unassigned g6" draggable="true" data-name="12-detail-embroidery.jpg"><span class="thumb-label">12-detail-embroidery.jpg</span><input type="checkbox" aria-label="Select 12-detail-embroidery.jpg"></div>
+        <div class="thumb unassigned g7" draggable="true" data-name="14-finale-walk.jpg"><span class="thumb-label">14-finale-walk.jpg</span><input type="checkbox" aria-label="Select 14-finale-walk.jpg"></div>
+        <div class="thumb unassigned g8" draggable="true" data-name="15-front-row.jpg"><span class="thumb-label">15-front-row.jpg</span><input type="checkbox" aria-label="Select 15-front-row.jpg"></div>
+        <div class="thumb unassigned g3" draggable="true" data-name="16-after-party.jpg"><span class="thumb-label">16-after-party.jpg</span><input type="checkbox" aria-label="Select 16-after-party.jpg"></div>
+      </div>
+    </div>
+
+    <div id="groupList"></div>
+
+    <div style="border:1.5px dashed var(--border); border-radius:8px; padding:30px; text-align:center; color:var(--text-2); font-size:14px; margin-top:18px;">
+      <b style="color:var(--blue); font-size:15px; display:block; margin-bottom:4px;">&#10697; Add Media</b>
+      or drag-and-drop files here
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"><span class="ok">&#10003;</span><span id="toastText"></span></div>
+
+<script>
+const CONTRIBUTORS = [
+  { id: 'gorunway',  name: 'GoRunway',         init: 'GR', status: 'Active',         contract: 'Boilerplate',     count: 7, open: true,
+    thumbs: [['g1','5B_Orlando_.jpg'],['g2','7B_OnceUpon.jpg'],['g3','05a26210-3.jpg'],['g4','6-Emma_Sto.jpg'],['g5','2A_MarieAnt.jpg'],['g6','6B_EdwardS.jpg'],['g7','3-suzuka-vo.jpg']] },
+  { id: 'getty',     name: 'Getty',            init: 'GE', status: 'Active',         contract: 'Fully executed',  count: 12, open: false, thumbs: [] },
+  { id: 'leibovitz', name: 'Annie Leibovitz',  init: 'AL', status: 'Active',         contract: 'Fully executed',  count: 9,  open: false, thumbs: [] },
+  { id: 'testino',   name: 'Mario Testino',    init: 'MT', status: 'Active',         contract: 'Fully executed',  count: 4,  open: false, thumbs: [] },
+  { id: 'summerton', name: 'Emma Summerton',   init: 'ES', status: 'CN Staff',       contract: 'Staff deal',      count: 6,  open: false, thumbs: [] },
+  { id: 'dior',      name: 'Dior Press Office',init: 'DP', status: 'PPR',            contract: 'PPR clearance',   count: 3,  open: false, thumbs: [] },
+  { id: 'archive',   name: 'CN Archive',       init: 'CA', status: 'Archival',       contract: 'Archival',        count: 2,  open: false, thumbs: [] }
+];
+
+const contribList = document.getElementById('contribList');
+const groupList = document.getElementById('groupList');
+const assignTarget = document.getElementById('assignTarget');
+const unassignedGrid = document.getElementById('unassignedGrid');
+const bucket = document.getElementById('bucket');
+const bucketCount = document.getElementById('bucketCount');
+const bulkBtn = document.getElementById('bulkAssign');
+const toast = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+
+CONTRIBUTORS.forEach(c => {
+  const greenStatuses = ['Active'];
+  const row = document.createElement('div');
+  row.className = 'contrib-row';
+  row.dataset.target = c.id;
+  row.innerHTML =
+    '<div class="c-name"><span class="c-avatar">' + c.init + '</span>' + c.name +
+    ' <span class="pill ' + (greenStatuses.includes(c.status) ? '' : 'gray') + '">' + c.status + '</span></div>' +
+    '<div class="c-meta">Contract: ' + c.contract + '</div>' +
+    '<div class="c-meta">Rights Release(s): 0</div>' +
+    '<div class="c-count"><span class="g-count" data-count-for="' + c.id + '">' + c.count + '</span> &#128444;</div>';
+  contribList.appendChild(row);
+
+  const group = document.createElement('div');
+  group.className = 'group' + (c.open ? ' open' : '');
+  group.dataset.target = c.id;
+  let thumbsHtml = c.thumbs.map(t =>
+    '<div class="thumb ' + t[0] + '"><span class="thumb-label">' + t[1] + '</span><input type="checkbox" aria-label="Select ' + t[1] + '"></div>'
+  ).join('');
+  group.innerHTML =
+    '<div class="group-head">' +
+      '<p class="group-title">&#128193; ' + c.name + ' <span class="gbadge g-count" data-count-for="' + c.id + '">' + c.count + '</span></p>' +
+      '<p class="group-meta">Hi-Res Media <span class="chev">&#9660;</span></p>' +
+    '</div>' +
+    '<div class="group-body"><div class="grid" data-grid="' + c.id + '">' + thumbsHtml + '</div></div>';
+  groupList.appendChild(group);
+
+  const opt = document.createElement('option');
+  opt.value = c.id;
+  opt.textContent = c.name;
+  assignTarget.appendChild(opt);
+});
+
+groupList.addEventListener('click', e => {
+  const head = e.target.closest('.group-head');
+  if (head) head.parentElement.classList.toggle('open');
+});
+
+let dragged = null;
+let toastTimer = null;
+
+function showToast(msg) {
+  toastText.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function contributorById(id) { return CONTRIBUTORS.find(c => c.id === id); }
+
+function assignThumbs(thumbs, targetId) {
+  const c = contributorById(targetId);
+  const grid = document.querySelector('[data-grid="' + targetId + '"]');
+  thumbs.forEach(t => {
+    t.classList.remove('unassigned', 'dragging');
+    t.removeAttribute('draggable');
+    const cb = t.querySelector('input');
+    if (cb) cb.checked = false;
+    grid.appendChild(t);
+  });
+  c.count += thumbs.length;
+  document.querySelectorAll('[data-count-for="' + targetId + '"]').forEach(el => el.textContent = c.count);
+  const remaining = unassignedGrid.querySelectorAll('.thumb').length;
+  bucketCount.textContent = remaining;
+  if (remaining === 0) bucket.style.opacity = '0.55';
+  updateBulkState();
+  const label = thumbs.length === 1 ? thumbs[0].dataset.name : thumbs.length + ' images';
+  showToast(label + ' attached to ' + c.name + '. Rights inherited, synced to Copilot.');
+}
+
+function updateBulkState() {
+  const checked = unassignedGrid.querySelectorAll('input:checked').length;
+  bulkBtn.disabled = checked === 0 || !assignTarget.value;
+  bulkBtn.textContent = checked > 0 ? 'Assign ' + checked : 'Assign';
+}
+
+unassignedGrid.addEventListener('dragstart', e => {
+  const t = e.target.closest('.thumb');
+  if (!t) return;
+  dragged = t;
+  t.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+});
+unassignedGrid.addEventListener('dragend', () => {
+  if (dragged) dragged.classList.remove('dragging');
+  document.querySelectorAll('.droptarget').forEach(x => x.classList.remove('droptarget'));
+});
+
+document.querySelectorAll('.contrib-row, .group').forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    if (!dragged) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    zone.classList.add('droptarget');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('droptarget'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('droptarget');
+    if (!dragged) return;
+    const t = dragged;
+    dragged = null;
+    assignThumbs([t], zone.dataset.target);
+  });
+});
+
+unassignedGrid.addEventListener('change', updateBulkState);
+assignTarget.addEventListener('change', updateBulkState);
+
+bulkBtn.addEventListener('click', () => {
+  const checked = [...unassignedGrid.querySelectorAll('input:checked')].map(cb => cb.closest('.thumb'));
+  if (checked.length === 0 || !assignTarget.value) return;
+  assignThumbs(checked, assignTarget.value);
+});
+</script>
+</body>
+</html>
