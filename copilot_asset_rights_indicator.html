@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copilot — embedded asset rights indicators</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+:root {
+  --blue: #3D5AFE;
+  --text: #161616;
+  --text-2: #525252;
+  --border: #e0e0e0;
+  --green-bg: #e3f3e3;
+  --green-text: #1d6f2b;
+  --green-solid: #2e8540;
+  --amber-bg: #fff4d6;
+  --amber-text: #8a6200;
+  --amber-solid: #c98a00;
+  --red-bg: #fdeaea;
+  --red-text: #b42318;
+  --red-solid: #d92d20;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: #fff;
+}
+p { margin: 0; }
+
+.canvas { max-width: 760px; margin: 48px auto 120px; padding: 0 24px; }
+.headline { font-size: 44px; font-weight: 700; line-height: 1.15; margin-bottom: 10px; letter-spacing: -0.5px; }
+.dek { font-size: 15px; color: var(--text-2); margin-bottom: 28px; }
+.bodytext { font-size: 16px; line-height: 1.7; color: var(--text); margin: 22px 0; }
+
+.img-block { position: relative; margin: 26px 0 6px; border-radius: 2px; }
+.img-block .ph {
+  width: 100%; aspect-ratio: 4/3; border-radius: 2px; display: block;
+}
+.ph1 { background: linear-gradient(160deg, #b8d4e8 0%, #b8d4e8 28%, #e0a98a 28%, #c9866a 100%); }
+.ph2 { background: linear-gradient(160deg, #cfd8dc 0%, #cfd8dc 24%, #8aa3b8 24%, #5d7a91 100%); }
+.ph3 { background: linear-gradient(160deg, #e8e2d4 0%, #e8e2d4 30%, #a8b89a 30%, #6d7d5f 100%); }
+
+.credit {
+  position: absolute; left: 0; bottom: 0;
+  background: rgba(0,0,0,0.65);
+  color: #fff; font-size: 12px;
+  padding: 5px 10px;
+}
+.caption { font-size: 14px; color: var(--text-2); padding: 8px 2px 0; border-bottom: 1px solid transparent; }
+
+.img-block:hover { outline: 2px solid var(--blue); outline-offset: 0; }
+.hoverbar {
+  position: absolute; top: 12px; right: 12px;
+  display: flex; gap: 8px;
+  opacity: 0; transition: opacity 0.12s;
+}
+.img-block:hover .hoverbar { opacity: 1; }
+.dark-btn {
+  background: rgba(33,33,33,0.92);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px; font-weight: 600;
+  padding: 9px 14px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: inherit;
+}
+.dark-btn:hover { background: rgba(0,0,0,0.95); }
+.dark-btn.cta-none { background: var(--red-solid); }
+.dark-btn.cta-pending { background: var(--amber-solid); }
+.dark-btn.cta-ok { background: rgba(33,33,33,0.92); }
+
+.rights-chip {
+  position: absolute; top: 12px; left: 12px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: default;
+  max-width: 70%;
+}
+.rights-chip .full { display: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.img-block:hover .rights-chip .full { display: inline; }
+.img-block:hover .rights-chip .short { display: none; }
+.chip-ok { background: var(--green-bg); color: var(--green-text); border: 1px solid rgba(46,133,64,0.4); }
+.chip-pending { background: var(--amber-bg); color: var(--amber-text); border: 1px solid rgba(201,138,0,0.45); }
+.chip-none { background: var(--red-bg); color: var(--red-text); border: 1px solid rgba(217,45,32,0.45); }
+.chip-none .pulse {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--red-solid); flex-shrink: 0;
+}
+
+.note {
+  background: #f4f4f4; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 13px; color: var(--text-2);
+  padding: 12px 16px; margin: 34px 0 0;
+  line-height: 1.6;
+}
+
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: flex-start; justify-content: center;
+  padding: 48px 24px;
+  z-index: 20;
+  overflow: auto;
+}
+.overlay.open { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 520px; max-width: 100%;
+}
+.m-head { display: flex; justify-content: space-between; align-items: flex-start; padding: 18px 24px; border-bottom: 1px solid var(--border); }
+.m-title { font-size: 17px; font-weight: 600; }
+.m-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+.m-body { padding: 14px 24px 6px; }
+.m-foot { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-top: 1px solid var(--border); }
+.x { border: none; background: none; font-size: 17px; color: var(--text-2); cursor: pointer; }
+.opt {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 7px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.opt:hover { border-color: #9aa6f8; }
+.opt.sel { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+.opt .sub { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+.opt .cp { margin-left: auto; font-size: 11px; color: var(--text-2); border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+.m-btn {
+  background: var(--text); color: #fff;
+  border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 600;
+  padding: 10px 18px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.m-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.skip { border: 1px solid var(--border); background: none; border-radius: 8px; padding: 9px 14px; font-size: 13px; cursor: pointer; font-family: inherit; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%) translateY(16px);
+  background: var(--text); color: #fff;
+  font-size: 14px; padding: 12px 20px; border-radius: 8px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 30;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="canvas">
+  <p class="headline">Die sch&ouml;nsten neuen Hotels am Comer See</p>
+  <p class="dek">Von Como bis Bellagio: drei Adressen, die diesen Sommer er&ouml;ffnen.</p>
+
+  <p class="bodytext">Der Comer See erlebt eine stille Renaissance. Drei Neuer&ouml;ffnungen zeigen, wie unterschiedlich Luxus hier interpretiert wird.</p>
+
+  <!-- State 1: rights cleared -->
+  <div class="img-block">
+    <div class="ph ph1"></div>
+    <span class="rights-chip chip-ok">
+      <i class="ti ti-shield-check" style="font-size:14px;"></i>
+      <span class="short">Rights</span>
+      <span class="full">GoRunway &middot; Fully executed</span>
+    </span>
+    <div class="hoverbar">
+      <button class="dark-btn cta-ok" onclick="showToast('Opens rights detail: component, agreement, syndication scope.')"><i class="ti ti-license" style="font-size:14px;"></i> View rights</button>
+      <button class="dark-btn"><i class="ti ti-external-link" style="font-size:14px;"></i> View Asset</button>
+    </div>
+    <span class="credit">Courtesy of Palazzo Venezia</span>
+  </div>
+  <p class="caption">Das Hotel "Palazzo Venezia" liegt direkt in Como am Hafen.</p>
+
+  <p class="bodytext">Wenige Kilometer weiter n&ouml;rdlich setzt das "Villa Lario" auf Zur&uuml;ckhaltung: acht Suiten, ein Steg, kein Schild an der T&uuml;r.</p>
+
+  <!-- State 2: pending -->
+  <div class="img-block">
+    <div class="ph ph2"></div>
+    <span class="rights-chip chip-pending">
+      <i class="ti ti-clock" style="font-size:14px;"></i>
+      <span class="short">Pending</span>
+      <span class="full">Awaiting rights &middot; PPR in progress in CP</span>
+    </span>
+    <div class="hoverbar">
+      <button class="dark-btn cta-pending" onclick="showToast('Deep link: resumes the in-flight PPR workflow in CP.')"><i class="ti ti-player-play" style="font-size:14px;"></i> Resume in CP</button>
+      <button class="dark-btn"><i class="ti ti-external-link" style="font-size:14px;"></i> View Asset</button>
+    </div>
+    <span class="credit">Courtesy of Villa Lario</span>
+  </div>
+  <p class="caption">Acht Suiten mit Blick auf den See: "Villa Lario" in Pognana Lario.</p>
+
+  <p class="bodytext">Und in Bellagio &ouml;ffnet im Juli das "Grand Hotel Serbelloni" seinen neuen Garten-Pavillon f&uuml;r Nicht-Hotelg&auml;ste.</p>
+
+  <!-- State 3: no rights -->
+  <div class="img-block">
+    <div class="ph ph3"></div>
+    <span class="rights-chip chip-none" id="chip3">
+      <span class="pulse"></span>
+      <span class="short">No rights</span>
+      <span class="full">No rights attached &middot; resolve here or later in CP</span>
+    </span>
+    <div class="hoverbar">
+      <button class="dark-btn cta-none" id="attachBtn" onclick="openModal()"><i class="ti ti-license" style="font-size:14px;"></i> Attach rights</button>
+      <button class="dark-btn"><i class="ti ti-external-link" style="font-size:14px;"></i> View Asset</button>
+    </div>
+    <span class="credit">Courtesy of Grand Hotel Serbelloni</span>
+  </div>
+  <p class="caption">Der neue Garten-Pavillon des "Grand Hotel Serbelloni" in Bellagio.</p>
+
+  <div class="note">
+    <b>Prototype notes:</b> chips are always visible and expand on hover; the rights action sits left of "View Asset". Image-level copy stays factual ("no rights attached") &mdash; the pressure point is a soft gate on Publish ("2 images have no rights attached. Publish anyway?"), while the hard consequence remains downstream: no syndication without rights. Hover the third image and click "Attach rights" to see the modal close the loop.
+  </div>
+</div>
+
+<!-- Rights modal (compact) -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="m-head">
+      <div>
+        <p class="m-title">Attach rights</p>
+        <p class="m-sub">1 image &middot; Story: Die sch&ouml;nsten neuen Hotels am Comer See</p>
+      </div>
+      <button class="x" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="m-body">
+      <div class="opt" data-v="Component: Palazzo Venezia PR"><div><b>PR / handout (PPR)</b><p class="sub">Hotel-supplied image, clearance reason required</p></div><span class="cp">Opens in CP</span></div>
+      <div class="opt" data-v="Getty"><div><b>Getty</b><p class="sub">Getty agreement auto-assigned</p></div></div>
+      <div class="opt" data-v="Commissioned contributor"><div><b>Commissioned contributor</b><p class="sub">Search Rightsline contributors</p></div></div>
+      <div class="opt" data-v="Commerce product image"><div><b>Commerce product image</b><p class="sub">Retailer-supplied, no syndication</p></div></div>
+    </div>
+    <div class="m-foot">
+      <button class="skip" onclick="closeModal()">Cancel</button>
+      <button class="m-btn" id="mGo" disabled onclick="resolveImage()">Attach rights</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const overlay = document.getElementById('overlay');
+const mGo = document.getElementById('mGo');
+const toast = document.getElementById('toast');
+let toastTimer = null;
+let picked = null;
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3400);
+}
+function openModal() { overlay.classList.add('open'); }
+function closeModal() { overlay.classList.remove('open'); }
+
+document.querySelectorAll('.opt').forEach(o => o.addEventListener('click', () => {
+  document.querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
+  o.classList.add('sel');
+  picked = o.dataset.v;
+  mGo.disabled = false;
+  mGo.textContent = o.querySelector('.cp') ? 'Continue in CP' : 'Attach rights';
+}));
+
+function resolveImage() {
+  closeModal();
+  const chip = document.getElementById('chip3');
+  if (picked && picked.indexOf('PPR') === -1 && picked !== 'Component: Palazzo Venezia PR') {
+    chip.className = 'rights-chip chip-ok';
+    chip.innerHTML = '<i class="ti ti-shield-check" style="font-size:14px;"></i><span class="short">Rights</span><span class="full">' + picked + ' &middot; attached</span>';
+    document.getElementById('attachBtn').outerHTML = '<button class="dark-btn cta-ok" onclick="showToast(\'Opens rights detail.\')"><i class="ti ti-license" style="font-size:14px;"></i> View rights</button>';
+    showToast('Rights attached. Synced to Content Planner.');
+  } else {
+    chip.className = 'rights-chip chip-pending';
+    chip.innerHTML = '<i class="ti ti-clock" style="font-size:14px;"></i><span class="short">Pending</span><span class="full">Awaiting rights &middot; PPR in progress in CP</span>';
+    document.getElementById('attachBtn').outerHTML = '<button class="dark-btn cta-pending" onclick="showToast(\'Deep link: resumes the PPR workflow in CP.\')"><i class="ti ti-player-play" style="font-size:14px;"></i> Resume in CP</button>';
+    showToast('PPR opened in CP. Image flagged as awaiting rights.');
+  }
+}
+</script>
+</body>
+</html>
