@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,6 +128,9 @@ button { font-family: inherit; cursor: pointer; }
 .opt.sel .dot { border: 5px solid var(--blue); }
 .opt .on { font-size: 13px; font-weight: 600; }
 .opt .od { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+.opt .ow { min-width: 0; }
+.inline-fields { border-left: 2px solid var(--blue); margin: 0 0 8px 7px; padding: 4px 0 6px 14px; }
+.inline-fields .fl:first-child { margin-top: 2px; }
 .fl { font-size: 12px; font-weight: 600; color: var(--text-2); margin: 10px 0 4px; }
 .newpanel select, .newpanel input[type=text] { width: 100%; height: 36px; font-size: 13px; padding: 0 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; }
 .note-line { font-size: 12px; color: var(--text-2); background: #f4f4f4; border-radius: 6px; padding: 8px 10px; margin-top: 8px; display: flex; gap: 7px; align-items: center; }
@@ -209,7 +213,14 @@ button { font-family: inherit; cursor: pointer; }
           <div class="newpanel" id="newpanel" style="display:none;">
             <p class="fl" style="margin-top:0;">Where are the images from?</p>
             <div id="optList"></div>
-            <div id="f-contrib" style="display:none;">
+            <div class="form-actions">
+              <button class="ghost" onclick="toggleNew(false)">Cancel</button>
+              <button class="solid" id="createBtn" disabled onclick="createComp()">Add</button>
+            </div>
+          </div>
+          <!-- hidden field templates, injected inline under the selected option -->
+          <div id="fieldTemplates" style="display:none;">
+            <div id="f-contrib">
               <p class="fl">Contributor</p>
               <select id="cSel">
                 <option value="">Search Rightsline contributors&hellip;</option>
@@ -227,15 +238,11 @@ button { font-family: inherit; cursor: pointer; }
               <p class="fl">Work order</p>
               <select id="woSel"><option value="new">New work order (default)</option></select>
             </div>
-            <div id="f-ppr" style="display:none;">
+            <div id="f-ppr">
               <p class="fl">Rights owner / source</p>
               <input type="text" id="pprSrc" placeholder="e.g. Palazzo Venezia press office">
               <p class="fl">Note (optional, pre-fills the CP form)</p>
               <input type="text" id="pprNote" placeholder="Reason for clearance&hellip;">
-            </div>
-            <div class="form-actions">
-              <button class="ghost" onclick="toggleNew(false)">Cancel</button>
-              <button class="solid" id="createBtn" disabled onclick="createComp()">Add</button>
             </div>
           </div>
         </div>
@@ -429,31 +436,50 @@ function assignTo(c) {
 }
 
 /* ---------- new component (v1-style options) ---------- */
+function fieldsFor(src) {
+  if (src === 'contributor') return document.getElementById('f-contrib');
+  if (src === 'ppr' || src === 'fairuse' || src === 'archival') return document.getElementById('f-ppr');
+  return null;
+}
 function renderOpts() {
   const host = document.getElementById('optList');
+  stowFields();
   host.innerHTML = '';
   NEW_OPTIONS.forEach(o => {
     const d = document.createElement('div');
     d.className = 'opt' + (curSrc === o.id ? ' sel' : '');
-    d.innerHTML = '<span class="dot"></span><div><p class="on">' + o.n + '</p><p class="od">' + o.d + '</p></div>';
-    d.onclick = () => {
-      curSrc = o.id;
-      document.getElementById('f-contrib').style.display = o.id === 'contributor' ? 'block' : 'none';
-      document.getElementById('f-ppr').style.display = (o.id === 'ppr' || o.id === 'fairuse' || o.id === 'archival') ? 'block' : 'none';
-      renderOpts(); validateNew();
-    };
+    d.innerHTML = '<span class="dot"></span><div class="ow"><p class="on">' + o.n + '</p><p class="od">' + o.d + '</p></div>';
+    d.onclick = () => { curSrc = o.id; renderOpts(); validateNew(); };
     host.appendChild(d);
+    // v1 behavior: inline detail fields render directly under the selected option
+    if (curSrc === o.id) {
+      const f = fieldsFor(o.id);
+      if (f) {
+        const wrap = document.createElement('div');
+        wrap.className = 'inline-fields';
+        f.style.display = 'block';
+        wrap.appendChild(f);
+        host.appendChild(wrap);
+      }
+    }
   });
 }
 function toggleNew(show) {
   document.getElementById('newpanel').style.display = show ? 'block' : 'none';
   document.getElementById('newBtn').style.display = show ? 'none' : 'block';
-  if (show) { curSrc = null; renderOpts(); validateNew(); }
+  if (show) { curSrc = null; stowFields(); renderOpts(); validateNew(); }
   else {
     ['cSel','kSel','pprSrc','pprNote'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('f-contrib').style.display = 'none';
-    document.getElementById('f-ppr').style.display = 'none';
+    stowFields();
   }
+}
+function stowFields() {
+  const tpl = document.getElementById('fieldTemplates');
+  ['f-contrib','f-ppr'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    if (el.parentElement && el.parentElement.id !== 'fieldTemplates') tpl.appendChild(el);
+  });
 }
 ['cSel','kSel','pprSrc'].forEach(id => document.addEventListener('DOMContentLoaded', () => {
   document.getElementById(id).addEventListener('input', validateNew);
