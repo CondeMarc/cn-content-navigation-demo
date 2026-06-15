@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copilot — rights workspace v3</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+:root {
+  --blue: #3D5AFE;
+  --text: #161616;
+  --text-2: #525252;
+  --text-3: #8d8d8d;
+  --border: #e0e0e0;
+  --green-bg: #e3f3e3; --green-text: #1d6f2b;
+  --pend-bg: #e7eefb;  --pend-text: #1d4ea0;
+  --amber-bg: #fff4d6; --amber-text: #8a6200;
+  --red-bg: #fdeaea;   --red-text: #b42318;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--text); background: #fff; }
+p { margin: 0; }
+button { font-family: inherit; cursor: pointer; }
+
+.canvas { max-width: 760px; margin: 48px auto 120px; padding: 0 24px; }
+.headline { font-size: 44px; font-weight: 700; line-height: 1.15; margin-bottom: 10px; letter-spacing: -0.5px; }
+.dek { font-size: 15px; color: var(--text-2); margin-bottom: 14px; }
+.bodytext { font-size: 16px; line-height: 1.7; margin: 22px 0; }
+.manage-bar { display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; margin: 18px 0 6px; flex-wrap: wrap; }
+.manage-bar .info { font-size: 13px; color: var(--text-2); flex: 1; min-width: 200px; }
+.btn-blue { background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; padding: 10px 16px; display: inline-flex; align-items: center; gap: 7px; }
+
+.img-block { position: relative; margin: 24px 0 6px; }
+.img-block .ph { width: 100%; aspect-ratio: 16/10; display: block; border-radius: 2px; }
+.g1 { background: linear-gradient(160deg, #b8d4e8 0%, #b8d4e8 28%, #e0a98a 28%, #c9866a 100%); }
+.g2 { background: linear-gradient(160deg, #cfd8dc 0%, #cfd8dc 24%, #8aa3b8 24%, #5d7a91 100%); }
+.g3 { background: linear-gradient(160deg, #e8e2d4 0%, #e8e2d4 30%, #a8b89a 30%, #6d7d5f 100%); }
+.g4 { background: linear-gradient(160deg, #e3d4e8 0%, #e3d4e8 26%, #b88aa3 26%, #915d7a 100%); }
+.g5 { background: linear-gradient(160deg, #d4e8e0 0%, #d4e8e0 30%, #8ab8a8 30%, #5d917b 100%); }
+.g6 { background: linear-gradient(160deg, #e8ddd4 0%, #e8ddd4 25%, #b8a08a 25%, #91735d 100%); }
+.credit { position: absolute; left: 0; bottom: 0; background: rgba(0,0,0,0.65); color: #fff; font-size: 12px; padding: 5px 10px; }
+.caption { font-size: 14px; color: var(--text-2); padding: 8px 2px 0; }
+.img-block:hover { outline: 2px solid var(--blue); }
+.hoverbar { position: absolute; top: 12px; right: 12px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.12s; }
+.img-block:hover .hoverbar { opacity: 1; }
+.dark-btn { background: rgba(33,33,33,0.92); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; padding: 9px 14px; display: inline-flex; align-items: center; gap: 7px; }
+.chip { position: absolute; top: 12px; left: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px; max-width: 72%; }
+.chip .full { display: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.img-block:hover .chip .full { display: inline; }
+.img-block:hover .chip .short { display: none; }
+.st-cleared { background: var(--green-bg); color: var(--green-text); border: 1px solid rgba(46,133,64,0.4); }
+.st-pending { background: var(--pend-bg); color: var(--pend-text); border: 1px solid rgba(47,111,214,0.45); }
+.st-none    { background: var(--amber-bg); color: var(--amber-text); border: 1px solid rgba(201,138,0,0.45); }
+.st-blocked { background: var(--red-bg); color: var(--red-text); border: 1px solid rgba(217,45,32,0.5); }
+
+/* ---------- workspace ---------- */
+.ov { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; padding: 18px; z-index: 30; }
+.ov.open { display: flex; }
+.ws { background: #fff; border-radius: 14px; width: 96vw; max-width: 1340px; height: 92vh; display: flex; flex-direction: column; overflow: hidden; }
+.ws-head { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 22px; border-bottom: 1px solid var(--border); }
+.ws-title { font-size: 17px; font-weight: 700; }
+.ws-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+.x { border: none; background: none; font-size: 18px; color: var(--text-2); padding: 4px; }
+
+.ws-main { display: flex; flex: 1; min-height: 0; }
+.left { flex: 1.25; min-width: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.left-bar { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.cnt { font-size: 13px; font-weight: 600; }
+.mini-btn { font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: #fff; border-radius: 6px; padding: 5px 10px; }
+.mini-btn:hover { border-color: var(--blue); color: var(--blue); }
+.left-scroll { flex: 1; overflow: auto; padding: 14px 18px; }
+
+.lsec { margin-bottom: 14px; }
+.lsec-head { display: flex; align-items: center; gap: 8px; padding: 8px 4px; cursor: pointer; user-select: none; border-radius: 6px; }
+.lsec-head:hover { background: #f7f7f7; }
+.lsec-title { font-size: 14px; font-weight: 700; }
+.lsec-meta { font-size: 12px; color: var(--text-2); }
+.lsec .chev { margin-left: auto; color: var(--text-3); font-size: 13px; transition: transform 0.12s; }
+.lsec.open .chev { transform: rotate(90deg); }
+.lsec-body { display: none; padding: 8px 2px 2px; }
+.lsec.open .lsec-body { display: block; }
+.spill { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+.spill.exec { background: var(--green-bg); color: var(--green-text); }
+.spill.cp { background: var(--pend-bg); color: var(--pend-text); }
+.spill.warn { background: var(--red-bg); color: var(--red-text); }
+.spill.need { background: var(--amber-bg); color: var(--amber-text); }
+
+.tg { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
+.tg.big { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.t { position: relative; border-radius: 8px; cursor: pointer; border: 2px solid transparent; overflow: hidden; aspect-ratio: 1; }
+.tg.big .t { aspect-ratio: 4/3; }
+.t .nm { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.72) 40%); color: #fff; font-size: 10px; font-weight: 600; padding: 14px 6px 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg.big .t .nm { font-size: 12px; padding-top: 22px; }
+.t .nm .cr { display: block; font-weight: 400; opacity: 0.8; font-size: 9px; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tg.big .t .nm .cr { font-size: 11px; }
+.t.selq { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(61,90,254,0.3); }
+.t .ck { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.85); border: 1.5px solid var(--text-3); display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+.t.selq .ck { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+.right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.right-bar { padding: 10px 18px; border-bottom: 1px solid var(--border); }
+.filter { width: 100%; height: 36px; font-size: 13px; padding: 0 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; }
+.right-scroll { flex: 1; overflow: auto; padding: 12px 18px; }
+.assign-hint { font-size: 12px; color: var(--text-3); margin: 2px 0 10px; }
+.sec-label { font-size: 12px; color: var(--text-3); margin: 10px 0 6px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
+.sec-label.newlbl { color: var(--pend-text); display: flex; align-items: center; gap: 5px; margin-top: 18px; }
+#newWrap { border-top: 1px dashed var(--border); margin-top: 14px; padding-top: 4px; }
+.crow.isnew { border-color: rgba(47,111,214,0.5); background: rgba(231,238,251,0.5); }
+.newtag { display: inline-block; font-size: 10px; font-weight: 700; color: var(--pend-text); background: var(--pend-bg); border-radius: 4px; padding: 1px 6px; margin-left: 7px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.03em; }
+.emptyrow { font-size: 12px; color: var(--text-3); padding: 4px 2px 6px; }
+.crow { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 7px; }
+.crow .pn { font-size: 14px; font-weight: 600; }
+.crow .ps { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+.crow .grow { flex: 1; min-width: 0; }
+.crow .n { font-size: 12px; color: var(--text-2); white-space: nowrap; }
+.addsel { border: 1px solid var(--blue); color: var(--blue); background: #fff; border-radius: 7px; font-size: 12px; font-weight: 700; padding: 7px 11px; white-space: nowrap; }
+.addsel:disabled { border-color: var(--border); color: var(--text-3); cursor: not-allowed; }
+.addsel:not(:disabled):hover { background: rgba(61,90,254,0.07); }
+
+.newbtn { width: 100%; border: 1.5px dashed var(--border); background: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 600; color: var(--blue); margin-top: 6px; }
+.newbtn:hover { border-color: var(--blue); }
+.newpanel { border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 8px; }
+.opt { display: flex; align-items: flex-start; gap: 10px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
+.opt:hover { border-color: #9aa6f8; }
+.opt.sel { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+.dot { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--text-3); flex-shrink: 0; margin-top: 2px; }
+.opt.sel .dot { border: 5px solid var(--blue); }
+.opt .on { font-size: 13px; font-weight: 600; }
+.opt .od { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+.fl { font-size: 12px; font-weight: 600; color: var(--text-2); margin: 10px 0 4px; }
+.newpanel select, .newpanel input[type=text] { width: 100%; height: 36px; font-size: 13px; padding: 0 10px; border: 1px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; }
+.note-line { font-size: 12px; color: var(--text-2); background: #f4f4f4; border-radius: 6px; padding: 8px 10px; margin-top: 8px; display: flex; gap: 7px; align-items: center; }
+.form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+.ghost { border: 1px solid var(--border); background: #fff; border-radius: 8px; font-size: 13px; padding: 8px 13px; }
+.solid { border: none; background: var(--text); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; padding: 8px 14px; }
+.solid:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.ws-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 22px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.summary { font-size: 13px; color: var(--text-2); flex: 1; min-width: 220px; }
+.confirm { background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; padding: 12px 22px; }
+.confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(16px); background: var(--text); color: #fff; font-size: 14px; padding: 12px 20px; border-radius: 8px; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 70; max-width: 92vw; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.cp-link { color: #9db8ff; font-weight: 600; text-decoration: underline; cursor: pointer; pointer-events: auto; }
+
+@media (max-width: 860px) {
+  .ov { padding: 0; }
+  .ws { width: 100%; height: 100vh; border-radius: 0; }
+  .ws-main { flex-direction: column; overflow: auto; }
+  .left { border-right: none; border-bottom: 1px solid var(--border); flex: none; }
+  .left-scroll { max-height: 44vh; }
+  .right { flex: none; }
+  .headline { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="canvas">
+  <p class="headline">Die sch&ouml;nsten neuen Hotels am Comer See</p>
+  <p class="dek">Von Como bis Bellagio: vier Adressen, die diesen Sommer er&ouml;ffnen.</p>
+
+  <div class="manage-bar">
+    <p class="info"><b id="mb-count"></b> &middot; rights overview for all assets of this content</p>
+    <button class="btn-blue" onclick="openWS(null)"><i class="ti ti-license" style="font-size:15px;"></i> Manage rights</button>
+  </div>
+
+  <p class="bodytext">Der Comer See erlebt eine stille Renaissance. Vier Neuer&ouml;ffnungen zeigen, wie unterschiedlich Luxus hier interpretiert wird.</p>
+  <div id="story"></div>
+
+  <div style="background:#f4f4f4; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text-2); padding:12px 16px; margin-top:34px; line-height:1.6;">
+    <b>Prototype notes:</b> the right pane now separates existing components on the story from new components added this session (marked with a New tag, in their own bordered section). Left pane opens with "Needs rights" expanded; assigned images sit in collapsed per-component sections. Tiles show filename and credit directly &mdash; no hover preview. With four or fewer images needing rights the grid renders large; "Simulate 50" switches to the dense grid. The right list filters and scales to 10+ components. "New component" restores the descriptive option list. Apply handles component creation silently and consolidates CP completions into one link.
+  </div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="ws">
+    <div class="ws-head">
+      <div>
+        <p class="ws-title">Manage rights</p>
+        <p class="ws-sub">Story: Die sch&ouml;nsten neuen Hotels am Comer See</p>
+      </div>
+      <button class="x" onclick="closeWS()">&#10005;</button>
+    </div>
+    <div class="ws-main">
+      <div class="left">
+        <div class="left-bar">
+          <span class="cnt" id="cnt"></span>
+          <button class="mini-btn" onclick="selectNeeds()">Select all needing rights</button>
+          <button class="mini-btn" onclick="clearSel()">Clear</button>
+          <button class="mini-btn" id="simBtn" onclick="simulate50()">Simulate 50 images</button>
+        </div>
+        <div class="left-scroll" id="leftScroll"></div>
+      </div>
+      <div class="right">
+        <div class="right-bar">
+          <input type="text" class="filter" id="filter" placeholder="Filter components&hellip;" oninput="renderRight()">
+        </div>
+        <div class="right-scroll">
+          <p class="assign-hint" id="hint"></p>
+          <p class="sec-label">Components on this story</p>
+          <div id="compList"></div>
+          <div id="newWrap" style="display:none;">
+            <p class="sec-label newlbl"><i class="ti ti-sparkles" style="font-size:12px;"></i> New components &middot; added this session</p>
+            <div id="newList"></div>
+          </div>
+          <button class="newbtn" id="newBtn" onclick="toggleNew(true)"><i class="ti ti-plus" style="font-size:13px;"></i> New component</button>
+          <div class="newpanel" id="newpanel" style="display:none;">
+            <p class="fl" style="margin-top:0;">Where are the images from?</p>
+            <div id="optList"></div>
+            <div id="f-contrib" style="display:none;">
+              <p class="fl">Contributor</p>
+              <select id="cSel">
+                <option value="">Search Rightsline contributors&hellip;</option>
+                <option>Mario Testino &middot; Rightsline #51077</option>
+                <option>Zo&euml; Ghertner &middot; Rightsline #48922</option>
+                <option>Tyler Mitchell &middot; Rightsline #50213</option>
+              </select>
+              <p class="fl">Contract</p>
+              <select id="kSel">
+                <option value="">Select&hellip;</option>
+                <option value="existing">C-2208 &middot; Photography master &middot; Fully executed</option>
+                <option value="existing">C-1965 &middot; Editorial framework 2024 &middot; Fully executed</option>
+                <option value="new">&#10133; New contract &mdash; completed in CP</option>
+              </select>
+              <p class="fl">Work order</p>
+              <select id="woSel"><option value="new">New work order (default)</option></select>
+            </div>
+            <div id="f-ppr" style="display:none;">
+              <p class="fl">Rights owner / source</p>
+              <input type="text" id="pprSrc" placeholder="e.g. Palazzo Venezia press office">
+              <p class="fl">Note (optional, pre-fills the CP form)</p>
+              <input type="text" id="pprNote" placeholder="Reason for clearance&hellip;">
+            </div>
+            <div class="form-actions">
+              <button class="ghost" onclick="toggleNew(false)">Cancel</button>
+              <button class="solid" id="createBtn" disabled onclick="createComp()">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ws-foot">
+      <p class="summary" id="summary"></p>
+      <button class="confirm" id="applyBtn" onclick="applyAll()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- data ---------- */
+let comps = [
+  { id: 'c-gorunway', name: 'GoRunway', sub: 'Runway deal', status: 'exec' },
+  { id: 'c-getty', name: 'Getty', sub: 'Getty agreement', status: 'exec' },
+  { id: 'c-leibovitz', name: 'Annie Leibovitz', sub: 'C-1242 + WO-8841', status: 'exec' },
+  { id: 'c-testino', name: 'Mario Testino', sub: 'C-2208 + WO-9340', status: 'exec' },
+  { id: 'c-summerton', name: 'Emma Summerton', sub: 'CN staff deal', status: 'exec' },
+  { id: 'c-villalario', name: 'Villa Lario PR (PPR)', sub: 'Clearance in progress', status: 'cp' },
+  { id: 'c-dior', name: 'Dior Press Office (PPR)', sub: 'Clearance in progress', status: 'cp' },
+  { id: 'c-archive', name: 'CN Archive', sub: 'Archival agreement', status: 'exec' },
+  { id: 'c-commerce', name: 'Commerce imagery', sub: 'Retailer umbrella, no syndication', status: 'exec' },
+  { id: 'c-vitalia', name: 'Vogue Italia shoot', sub: 'Scope: IT print only \u2014 not permitted here', status: 'warn' }
+];
+let images = [
+  { id: 'i1', name: 'palazzo-facade.jpg', grad: 'g1', state: 'cleared', compId: 'c-gorunway', embedded: true,
+    credit: 'Courtesy of Palazzo Venezia', caption: 'Das Hotel "Palazzo Venezia" liegt direkt in Como am Hafen.' },
+  { id: 'i2', name: 'villa-lario-suite.jpg', grad: 'g2', state: 'pending', compId: 'c-villalario', embedded: true,
+    credit: 'Courtesy of Villa Lario', caption: 'Acht Suiten mit Blick auf den See: "Villa Lario" in Pognana Lario.' },
+  { id: 'i3', name: 'serbelloni-pavillon.jpg', grad: 'g3', state: 'none', compId: null, embedded: true,
+    credit: 'Courtesy of Grand Hotel Serbelloni', caption: 'Der neue Garten-Pavillon des "Grand Hotel Serbelloni" in Bellagio.' },
+  { id: 'i4', name: 'vogue-italia-shoot.jpg', grad: 'g4', state: 'blocked', compId: 'c-vitalia', embedded: true,
+    credit: 'Vogue Italia / Archiv', caption: 'Aufnahme aus dem Vogue-Italia-Shooting am Lago di Como, 2024.' },
+  { id: 'i5', name: 'como-harbour-02.jpg', grad: 'g5', state: 'none', compId: null, embedded: false, credit: 'Courtesy of Como Tourism' },
+  { id: 'i6', name: 'bellagio-garden-03.jpg', grad: 'g6', state: 'none', compId: null, embedded: false, credit: 'Courtesy of Grand Hotel Serbelloni' }
+];
+const NEW_OPTIONS = [
+  { id: 'contributor', n: 'Commissioned contributor', d: 'Search Rightsline; pick contract, work order defaults to new' },
+  { id: 'getty', n: 'Getty', d: 'Getty agreement assigned automatically' },
+  { id: 'gorunway', n: 'GoRunway', d: 'Runway deal assigned automatically' },
+  { id: 'staff', n: 'Cond\u00e9 Nast staff', d: 'Internal staff deal' },
+  { id: 'commerce', n: 'Commerce product image', d: 'Retailer-supplied, excluded from syndication' },
+  { id: 'archival', n: 'Archival content', d: 'Archival agreement, contributor required' },
+  { id: 'ppr', n: 'PR / handout (PPR)', d: 'Clearance completed in CP' },
+  { id: 'fairuse', n: 'Fair use / public domain', d: 'Request reviewed in CP' }
+];
+let selection = new Set();
+let openSecs = new Set(['needs']);
+let dirty = new Set();
+let curSrc = null;
+let nextC = 1;
+let toastTimer = null;
+
+/* ---------- story ---------- */
+const SM = {
+  cleared: { cls: 'st-cleared', icon: 'ti-shield-check', short: 'Rights', act: 'View rights' },
+  pending: { cls: 'st-pending', icon: 'ti-clock', short: 'Pending', act: 'Resume rights' },
+  none:    { cls: 'st-none', icon: 'ti-alert-triangle', short: 'No rights', act: 'Attach rights' },
+  blocked: { cls: 'st-blocked', icon: 'ti-ban', short: 'Not permitted', act: 'Review rights' }
+};
+function fullText(img) {
+  const c = comps.find(x => x.id === img.compId);
+  if (img.state === 'cleared') return (c ? c.name : 'Rights') + ' \u00b7 fully executed';
+  if (img.state === 'pending') return 'Awaiting completion in CP' + (c ? ' \u00b7 ' + c.name : '');
+  if (img.state === 'blocked') return 'Rights attached \u00b7 usage not permitted for this story';
+  return 'No rights attached \u00b7 resolve here or later in CP';
+}
+function renderStory() {
+  const host = document.getElementById('story');
+  host.innerHTML = '';
+  images.filter(i => i.embedded).forEach(img => {
+    const m = SM[img.state];
+    const d = document.createElement('div');
+    d.innerHTML =
+      '<div class="img-block"><div class="ph ' + img.grad + '"></div>' +
+      '<span class="chip ' + m.cls + '"><i class="ti ' + m.icon + '" style="font-size:14px;"></i><span class="short">' + m.short + '</span><span class="full">' + fullText(img) + '</span></span>' +
+      '<div class="hoverbar"><button class="dark-btn" onclick="openWS(\'' + img.id + '\')"><i class="ti ti-license" style="font-size:14px;"></i> ' + m.act + '</button>' +
+      '<button class="dark-btn"><i class="ti ti-external-link" style="font-size:14px;"></i> View Asset</button></div>' +
+      '<span class="credit">' + img.credit + '</span></div><p class="caption">' + img.caption + '</p>';
+    host.appendChild(d);
+  });
+  const need = images.filter(i => i.state === 'none' || i.state === 'blocked').length;
+  document.getElementById('mb-count').textContent = images.length + ' assets, ' + need + ' need attention';
+}
+
+/* ---------- workspace ---------- */
+function openWS(pre) {
+  selection.clear();
+  if (pre) selection.add(pre);
+  openSecs = new Set(['needs']);
+  if (pre) { const img = images.find(i => i.id === pre); if (img && img.compId) openSecs.add(img.compId); }
+  document.getElementById('ov').classList.add('open');
+  renderLeft(); renderRight();
+}
+function closeWS() { document.getElementById('ov').classList.remove('open'); renderStory(); }
+
+function thumbEl(img) {
+  const t = document.createElement('div');
+  t.className = 't ' + img.grad + (selection.has(img.id) ? ' selq' : '');
+  t.innerHTML = '<span class="ck">&#10003;</span><span class="nm">' + img.name +
+    (img.credit ? '<span class="cr">' + img.credit + '</span>' : '') + '</span>';
+  t.onclick = () => { selection.has(img.id) ? selection.delete(img.id) : selection.add(img.id); renderLeft(); renderRight(); };
+  return t;
+}
+function section(id, title, metaHtml, imgs, big) {
+  const s = document.createElement('div');
+  s.className = 'lsec' + (openSecs.has(id) ? ' open' : '');
+  const head = document.createElement('div');
+  head.className = 'lsec-head';
+  head.innerHTML = '<span class="lsec-title">' + title + '</span>' + metaHtml +
+    '<span class="lsec-meta">' + imgs.length + ' image' + (imgs.length === 1 ? '' : 's') + '</span><span class="chev">&#9656;</span>';
+  head.onclick = () => { openSecs.has(id) ? openSecs.delete(id) : openSecs.add(id); renderLeft(); };
+  s.appendChild(head);
+  const body = document.createElement('div');
+  body.className = 'lsec-body';
+  const grid = document.createElement('div');
+  grid.className = 'tg' + (big ? ' big' : '');
+  imgs.forEach(i => grid.appendChild(thumbEl(i)));
+  body.appendChild(grid);
+  s.appendChild(body);
+  return s;
+}
+function renderLeft() {
+  const host = document.getElementById('leftScroll');
+  host.innerHTML = '';
+  const needs = images.filter(i => !i.compId);
+  host.appendChild(section('needs', 'Needs rights', '<span class="spill need">action needed</span>', needs, needs.length <= 4));
+  comps.forEach(c => {
+    const imgs = images.filter(i => i.compId === c.id);
+    if (!imgs.length) return;
+    const pill = c.status === 'exec' ? '<span class="spill exec">Fully executed</span>'
+      : c.status === 'cp' ? '<span class="spill cp">In progress in CP</span>'
+      : '<span class="spill warn">Not permitted here</span>';
+    host.appendChild(section(c.id, c.name, pill, imgs, false));
+  });
+  document.getElementById('cnt').textContent = selection.size + ' selected \u00b7 ' + needs.length + ' need rights';
+}
+function selectNeeds() { selection = new Set(images.filter(i => !i.compId).map(i => i.id)); renderLeft(); renderRight(); }
+function clearSel() { selection.clear(); renderLeft(); renderRight(); }
+function simulate50() {
+  const grads = ['g1','g2','g3','g4','g5','g6'];
+  for (let n = 1; n <= 46; n++) images.push({ id: 'x' + n, name: 'gallery-' + String(n).padStart(2, '0') + '.jpg', grad: grads[n % 6], state: 'none', compId: null, embedded: false, credit: 'Various' });
+  document.getElementById('simBtn').style.display = 'none';
+  renderLeft();
+}
+
+/* ---------- right pane ---------- */
+function compRow(c) {
+  const n = images.filter(i => i.compId === c.id).length;
+  const row = document.createElement('div');
+  row.className = 'crow' + (c.isNew ? ' isnew' : '');
+  row.innerHTML = '<div class="grow"><p class="pn">' + c.name +
+    (c.isNew ? '<span class="newtag">New</span>' : '') + '</p><p class="ps">' + c.sub + '</p></div>' +
+    '<span class="n">' + n + ' img</span>';
+  const b = document.createElement('button');
+  b.className = 'addsel';
+  b.disabled = selection.size === 0 || c.status === 'warn';
+  b.textContent = c.status === 'warn' ? 'Scope mismatch' : ('Add ' + (selection.size || '') + ' selected').replace('  ', ' ');
+  b.onclick = () => assignTo(c);
+  row.appendChild(b);
+  return row;
+}
+function renderRight() {
+  const exHost = document.getElementById('compList');
+  const newHost = document.getElementById('newList');
+  const q = document.getElementById('filter').value.trim().toLowerCase();
+  exHost.innerHTML = '';
+  newHost.innerHTML = '';
+  const match = c => !q || c.name.toLowerCase().includes(q);
+  const existing = comps.filter(c => !c.isNew && match(c));
+  const created = comps.filter(c => c.isNew && match(c));
+  existing.forEach(c => exHost.appendChild(compRow(c)));
+  if (!existing.length) exHost.innerHTML = '<p class="emptyrow">No matching components.</p>';
+  created.forEach(c => newHost.appendChild(compRow(c)));
+  document.getElementById('newWrap').style.display = comps.some(c => c.isNew) ? 'block' : 'none';
+  document.getElementById('hint').textContent = selection.size > 0
+    ? 'Add the ' + selection.size + ' selected image' + (selection.size > 1 ? 's' : '') + ' to a component:'
+    : 'Select images on the left first.';
+  updateSummary();
+}
+function assignTo(c) {
+  if (selection.size === 0) return;
+  images.forEach(img => { if (selection.has(img.id)) { img.compId = c.id; dirty.add(img.id); } });
+  selection.clear();
+  openSecs.add(c.id);
+  renderLeft(); renderRight();
+}
+
+/* ---------- new component (v1-style options) ---------- */
+function renderOpts() {
+  const host = document.getElementById('optList');
+  host.innerHTML = '';
+  NEW_OPTIONS.forEach(o => {
+    const d = document.createElement('div');
+    d.className = 'opt' + (curSrc === o.id ? ' sel' : '');
+    d.innerHTML = '<span class="dot"></span><div><p class="on">' + o.n + '</p><p class="od">' + o.d + '</p></div>';
+    d.onclick = () => {
+      curSrc = o.id;
+      document.getElementById('f-contrib').style.display = o.id === 'contributor' ? 'block' : 'none';
+      document.getElementById('f-ppr').style.display = (o.id === 'ppr' || o.id === 'fairuse' || o.id === 'archival') ? 'block' : 'none';
+      renderOpts(); validateNew();
+    };
+    host.appendChild(d);
+  });
+}
+function toggleNew(show) {
+  document.getElementById('newpanel').style.display = show ? 'block' : 'none';
+  document.getElementById('newBtn').style.display = show ? 'none' : 'block';
+  if (show) { curSrc = null; renderOpts(); validateNew(); }
+  else {
+    ['cSel','kSel','pprSrc','pprNote'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('f-contrib').style.display = 'none';
+    document.getElementById('f-ppr').style.display = 'none';
+  }
+}
+['cSel','kSel','pprSrc'].forEach(id => document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById(id).addEventListener('input', validateNew);
+}));
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('kSel').addEventListener('change', () => {
+    const k = document.getElementById('kSel');
+    const wo = document.getElementById('woSel');
+    wo.innerHTML = '<option value="new">New work order (default)</option>';
+    if (k.options[k.selectedIndex] && k.options[k.selectedIndex].value === 'existing') {
+      wo.innerHTML += '<option>WO-9340 \u00b7 Comer See coverage</option><option>WO-9105 \u00b7 Spring portfolio</option>';
+    }
+    wo.value = 'new';
+  });
+});
+function validateNew() {
+  const b = document.getElementById('createBtn');
+  if (!curSrc) { b.disabled = true; return; }
+  if (curSrc === 'contributor') b.disabled = !(document.getElementById('cSel').value && document.getElementById('kSel').value);
+  else if (curSrc === 'ppr' || curSrc === 'fairuse' || curSrc === 'archival') b.disabled = !document.getElementById('pprSrc').value.trim();
+  else b.disabled = false;
+}
+function createComp() {
+  let c = null;
+  if (curSrc === 'contributor') {
+    const name = document.getElementById('cSel').value.split(' \u00b7')[0];
+    const k = document.getElementById('kSel');
+    const deferred = k.options[k.selectedIndex].value === 'new';
+    const wo = document.getElementById('woSel');
+    const woTxt = wo.value === 'new' ? 'new WO' : wo.options[wo.selectedIndex].text.split(' \u00b7')[0];
+    c = { id: 'nc' + nextC, name: name, status: deferred ? 'cp' : 'exec',
+      sub: deferred ? 'New contract + new WO \u00b7 completed in CP' : k.options[k.selectedIndex].text.split(' \u00b7')[0] + ' + ' + woTxt };
+  } else if (curSrc === 'ppr' || curSrc === 'fairuse' || curSrc === 'archival') {
+    const lbl = curSrc === 'ppr' ? 'PPR' : (curSrc === 'fairuse' ? 'Fair use' : 'Archival');
+    c = { id: 'nc' + nextC, name: document.getElementById('pprSrc').value.trim() + ' (' + lbl + ')', status: 'cp', sub: 'Clearance completed in CP' };
+  } else {
+    const names = { getty: 'Getty', gorunway: 'GoRunway', staff: 'CN staff', commerce: 'Commerce imagery' };
+    const ex = comps.find(x => x.name === names[curSrc]);
+    if (ex) { toggleNew(false); if (selection.size) assignTo(ex); showToast('Reusing the existing ' + ex.name + ' component on this story.'); return; }
+    c = { id: 'nc' + nextC, name: names[curSrc], status: 'exec', sub: 'Provider deal auto-assigned' };
+  }
+  nextC++;
+  c.isNew = true;
+  comps.push(c);
+  toggleNew(false);
+  if (selection.size) assignTo(c); else { renderLeft(); renderRight(); }
+}
+
+/* ---------- apply ---------- */
+function updateSummary() {
+  const moved = [...dirty].map(id => images.find(i => i.id === id)).filter(Boolean);
+  if (!moved.length) {
+    document.getElementById('summary').textContent = 'No changes yet.';
+    document.getElementById('applyBtn').disabled = true;
+    return;
+  }
+  const byComp = {};
+  moved.forEach(i => { const c = comps.find(x => x.id === i.compId); if (c) byComp[c.name] = (byComp[c.name] || 0) + 1; });
+  const parts = Object.entries(byComp).map(([n, k]) => k + ' \u2192 ' + n);
+  const cpN = moved.filter(i => { const c = comps.find(x => x.id === i.compId); return c && c.status === 'cp'; }).length;
+  document.getElementById('summary').textContent = 'Apply: ' + parts.join(' \u00b7 ') + (cpN ? ' \u00b7 ' + cpN + ' completing in CP (one link)' : '');
+  document.getElementById('applyBtn').disabled = false;
+}
+function applyAll() {
+  let cpComps = new Set();
+  dirty.forEach(id => {
+    const img = images.find(i => i.id === id);
+    const c = comps.find(x => x.id === img.compId);
+    if (!c) return;
+    img.state = c.status === 'cp' ? 'pending' : 'cleared';
+    if (c.status === 'cp') cpComps.add(c.name);
+  });
+  dirty.clear();
+  closeWS();
+  if (cpComps.size > 0) {
+    const t = document.getElementById('toast');
+    t.innerHTML = 'Applied. Components created. <span class="cp-link" onclick="showToast(\'One CP tab: story view with ' + cpComps.size + ' clearance(s) to complete.\')">Complete ' + cpComps.size + ' in CP</span>';
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 4600);
+  } else {
+    showToast('Applied. Images attached, synced to Content Planner.');
+  }
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3600);
+}
+
+renderStory();
+</script>
+</body>
+</html>
