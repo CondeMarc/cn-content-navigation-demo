@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Change First Publication — Content Planner</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #ffffff; color: #1a1a18; }
+.app { display: flex; flex-direction: column; gap: 0; min-height: 600px; }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 0.5px solid #e8e7e3; background: #ffffff; }
+.topbar-title { font-size: 13px; font-weight: 500; color: #6b6a66; }
+.topbar-story { font-size: 13px; color: #1a1a18; }
+.topbar-sep { color: #d0cfc9; font-size: 13px; }
+.story-header { padding: 16px; background: #ffffff; border-bottom: 0.5px solid #e8e7e3; }
+.story-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+.badge-market { background: #E6F1FB; color: #0C447C; }
+.badge-global { background: #EAF3DE; color: #27500A; }
+.badge-planned { background: #FAEEDA; color: #633806; }
+.story-title { font-size: 18px; font-weight: 500; color: #1a1a18; margin-bottom: 8px; }
+.story-sub { font-size: 13px; color: #6b6a66; }
+.passive-indicator { display: none; margin-top: 10px; align-items: center; gap: 8px; }
+.passive-indicator.visible { display: flex; }
+.pi-dot { width: 6px; height: 6px; border-radius: 50%; background: #B5D4F4; flex-shrink: 0; }
+.pi-text { font-size: 12px; color: #6b6a66; }
+.pi-link { color: #185FA5; cursor: pointer; text-decoration: none; }
+.pi-link:hover { text-decoration: underline; }
+.action-bar { display: flex; gap: 8px; padding: 12px 16px; background: #f5f4f0; border-bottom: 0.5px solid #e8e7e3; }
+.action-btn { font-size: 12px; padding: 6px 12px; border: 0.5px solid #d0cfc9; border-radius: 6px; background: #ffffff; color: #6b6a66; cursor: pointer; }
+.action-btn.primary { color: #185FA5; border-color: #B5D4F4; font-weight: 500; }
+.action-btn.primary:hover { background: #E6F1FB; }
+.components-list { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.section-label { font-size: 11px; font-weight: 500; color: #9e9d99; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.component-card { border: 0.5px solid #e8e7e3; border-radius: 10px; padding: 12px 14px; background: #ffffff; display: flex; align-items: center; gap: 12px; }
+.comp-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.comp-icon.article { background: #E6F1FB; }
+.comp-icon.gallery { background: #EAF3DE; }
+.comp-icon.video { background: #FAEEDA; }
+.comp-info { flex: 1; min-width: 0; }
+.comp-name { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.comp-meta { font-size: 12px; color: #6b6a66; margin-top: 1px; }
+.comp-badge { font-size: 11px; padding: 1px 7px; border-radius: 20px; }
+.comp-badge.global { background: #EAF3DE; color: #27500A; }
+.comp-badge.regional { background: #f1f0ec; color: #5F5E5A; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: flex-start; justify-content: center; padding-top: 48px; z-index: 100; }
+.overlay.open { display: flex; }
+.modal { background: #ffffff; border-radius: 10px; border: 0.5px solid #d0cfc9; width: 520px; max-width: 95vw; overflow: hidden; }
+.modal-header { padding: 16px 20px; border-bottom: 0.5px solid #e8e7e3; display: flex; align-items: flex-start; justify-content: space-between; }
+.modal-title { font-size: 15px; font-weight: 500; color: #1a1a18; }
+.modal-sub { font-size: 12px; color: #6b6a66; margin-top: 2px; }
+.modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: #6b6a66; line-height: 1; padding: 0; }
+.modal-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+.modal-section-title { font-size: 12px; font-weight: 500; color: #6b6a66; margin-bottom: 6px; }
+.select-input { width: 100%; padding: 8px 12px; font-size: 13px; border: 0.5px solid #d0cfc9; border-radius: 6px; background: #ffffff; color: #1a1a18; }
+.select-input:disabled { background: #f5f4f0; color: #9e9d99; }
+.comp-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0.5px solid #e8e7e3; border-radius: 6px; margin-bottom: 6px; cursor: pointer; }
+.comp-row.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.comp-row.checked { border-color: #B5D4F4; background: #E6F1FB; }
+.comp-row input[type=checkbox] { flex-shrink: 0; }
+.comp-row-info { flex: 1; }
+.comp-row-name { font-size: 13px; font-weight: 500; color: #1a1a18; }
+.comp-row-meta { font-size: 12px; color: #6b6a66; }
+.comp-row-badge { font-size: 11px; padding: 1px 7px; border-radius: 20px; margin-left: auto; flex-shrink: 0; }
+.comp-list-wrapper { opacity: 0.4; pointer-events: none; transition: opacity 0.15s; }
+.comp-list-wrapper.enabled { opacity: 1; pointer-events: auto; }
+.summary-line { font-size: 12px; color: #6b6a66; min-height: 18px; }
+.summary-line strong { color: #185FA5; }
+.modal-footer { padding: 12px 20px; border-top: 0.5px solid #e8e7e3; display: flex; justify-content: flex-end; gap: 8px; background: #f5f4f0; }
+.btn-cancel { font-size: 13px; padding: 7px 16px; border: 0.5px solid #d0cfc9; border-radius: 6px; background: #ffffff; color: #6b6a66; cursor: pointer; }
+.btn-confirm { font-size: 13px; padding: 7px 16px; border: 0.5px solid #B5D4F4; border-radius: 6px; background: #185FA5; color: #fff; cursor: pointer; font-weight: 500; }
+.btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.moved-section { padding: 0 16px 16px; }
+.moved-header { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px 0; user-select: none; }
+.moved-header-label { font-size: 11px; font-weight: 500; color: #9e9d99; letter-spacing: 0.06em; text-transform: uppercase; }
+.moved-chevron { font-size: 10px; color: #9e9d99; transition: transform 0.15s; }
+.moved-chevron.open { transform: rotate(90deg); }
+.moved-list { display: none; flex-direction: column; gap: 6px; }
+.moved-list.open { display: flex; }
+.moved-card { border: 0.5px solid #e8e7e3; border-radius: 10px; padding: 10px 14px; background: #fafaf8; display: flex; align-items: center; gap: 12px; opacity: 0.75; }
+.moved-card:hover { opacity: 1; }
+.moved-info { flex: 1; min-width: 0; }
+.moved-name { font-size: 13px; font-weight: 500; color: #6b6a66; }
+.moved-meta { font-size: 11px; color: #9e9d99; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+.moved-id { font-family: monospace; font-size: 10px; color: #b0afa9; background: #f1f0ec; padding: 1px 5px; border-radius: 3px; }
+.moved-dest { font-size: 11px; color: #185FA5; }
+.moved-badge { font-size: 10px; padding: 1px 6px; border-radius: 20px; background: #f1f0ec; color: #9e9d99; margin-left: auto; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="success-banner" id="successBanner">
+    Components successfully moved. Vogue UK is now the first publication market.
+  </div>
+
+  <div class="topbar">
+    <span class="topbar-title">Content Planner</span>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-title">Stories</span>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-story">The New Power Dressing</span>
+  </div>
+
+  <div class="story-header">
+    <div class="story-meta">
+      <span class="badge badge-market" id="marketBadge">Vogue US</span>
+      <span class="badge badge-global">Global</span>
+      <span class="badge badge-planned">Planned</span>
+    </div>
+    <div class="story-title">The New Power Dressing</div>
+    <div class="story-sub" id="storySub">First publication: Vogue US &nbsp;·&nbsp; Issue: September 2025 &nbsp;·&nbsp; 3 components</div>
+    <div class="passive-indicator" id="passiveIndicator">
+      <div class="pi-dot"></div>
+      <span class="pi-text">First published by Vogue UK &nbsp;·&nbsp; <a class="pi-link" href="#">Syndicate to this market ↗</a></span>
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <button class="action-btn">Syndicate</button>
+    <button class="action-btn">Add component</button>
+    <button class="action-btn">Edit story</button>
+    <button class="action-btn primary" onclick="openModal()">Change first publication...</button>
+  </div>
+
+  <div class="components-list">
+    <div class="section-label">Components</div>
+    <div class="component-card" id="activeCard1">
+      <div class="comp-icon article">📄</div>
+      <div class="comp-info">
+        <div class="comp-name">Sophie Amoruso</div>
+        <div class="comp-meta">Article &nbsp;·&nbsp; 3,200 words &nbsp;·&nbsp; <span class="comp-badge global">Global agreement</span></div>
+      </div>
+    </div>
+    <div class="component-card" id="activeCard2">
+      <div class="comp-icon gallery">🖼</div>
+      <div class="comp-info">
+        <div class="comp-name">Mert Alas</div>
+        <div class="comp-meta">Gallery &nbsp;·&nbsp; 12 images &nbsp;·&nbsp; <span class="comp-badge global">Global agreement</span></div>
+      </div>
+    </div>
+    <div class="component-card">
+      <div class="comp-icon video">▶</div>
+      <div class="comp-info">
+        <div class="comp-name">Jordan Walsh</div>
+        <div class="comp-meta">Video &nbsp;·&nbsp; 4:22 &nbsp;·&nbsp; <span class="comp-badge regional">US regional only</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Moved components — revealed after confirm -->
+  <div class="moved-section" id="movedSection" style="display:none">
+    <div class="moved-header" onclick="toggleMoved()">
+      <span class="moved-chevron" id="movedChevron">›</span>
+      <span class="moved-header-label">Moved components <span id="movedCount" style="font-weight:400">(2)</span></span>
+    </div>
+    <div class="moved-list" id="movedList">
+      <div class="moved-card">
+        <div class="moved-info">
+          <div class="moved-name">Sophie Amoruso</div>
+          <div class="moved-meta">
+            <span class="moved-id">cmp_0041</span>
+            <span>·</span>
+            <span>Article · 3,200 words</span>
+            <span>·</span>
+            <span class="moved-dest">Moved to Vogue UK</span>
+            <span>·</span>
+            <a class="pi-link" href="#" style="font-size:11px">Syndicate back ↗</a>
+          </div>
+        </div>
+        <span class="moved-badge">Read only</span>
+      </div>
+      <div class="moved-card">
+        <div class="moved-info">
+          <div class="moved-name">Mert Alas</div>
+          <div class="moved-meta">
+            <span class="moved-id">cmp_0042</span>
+            <span>·</span>
+            <span>Gallery · 12 images</span>
+            <span>·</span>
+            <span class="moved-dest">Moved to Vogue UK</span>
+            <span>·</span>
+            <a class="pi-link" href="#" style="font-size:11px">Syndicate back ↗</a>
+          </div>
+        </div>
+        <span class="moved-badge">Read only</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Change first publication</div>
+        <div class="modal-sub">Reassign the originating market for this story's components</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+
+    <div class="modal-body">
+      <div>
+        <div class="modal-section-title">Target brand / market</div>
+        <select class="select-input" id="targetMarket" onchange="updateTarget()">
+          <option value="">Select brand/market...</option>
+          <option value="vogue-uk">Vogue UK</option>
+          <option value="vogue-fr">Vogue France</option>
+          <option value="vogue-de">Vogue Germany</option>
+          <option value="vogue-it">Vogue Italy</option>
+        </select>
+      </div>
+
+      <div>
+        <div class="modal-section-title">Target story</div>
+        <select class="select-input" id="targetStory" disabled onchange="updateSummary()">
+          <option value="">Select a brand/market first...</option>
+        </select>
+      </div>
+
+      <div>
+        <div class="modal-section-title" style="margin-bottom:4px;">Components to move</div>
+        <div style="font-size:12px; color:#9e9d99; margin-bottom:10px;">Only components with global agreements can be moved.</div>
+        <div class="comp-list-wrapper" id="compListWrapper">
+          <div class="comp-row checked" id="row1" onclick="toggleRow('row1','cb1')">
+            <input type="checkbox" id="cb1" checked onclick="event.stopPropagation(); toggleRow('row1','cb1')">
+            <div class="comp-row-info">
+              <div class="comp-row-name">Sophie Amoruso</div>
+              <div class="comp-row-meta">Article · 3,200 words</div>
+            </div>
+            <span class="comp-row-badge comp-badge global">Global</span>
+          </div>
+          <div class="comp-row checked" id="row2" onclick="toggleRow('row2','cb2')">
+            <input type="checkbox" id="cb2" checked onclick="event.stopPropagation(); toggleRow('row2','cb2')">
+            <div class="comp-row-info">
+              <div class="comp-row-name">Mert Alas</div>
+              <div class="comp-row-meta">Gallery · 12 images</div>
+            </div>
+            <span class="comp-row-badge comp-badge global">Global</span>
+          </div>
+          <div class="comp-row disabled">
+            <input type="checkbox" disabled>
+            <div class="comp-row-info">
+              <div class="comp-row-name">Jordan Walsh</div>
+              <div class="comp-row-meta">Video · US regional only — cannot be moved</div>
+            </div>
+            <span class="comp-row-badge comp-badge regional">Regional</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-line" id="summaryLine"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" id="confirmBtn" disabled onclick="doConfirm()">Confirm &amp; move</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal() {
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('targetMarket').value = '';
+  document.getElementById('targetStory').disabled = true;
+  document.getElementById('targetStory').innerHTML = '<option value="">Select a brand/market first...</option>';
+  document.getElementById('compListWrapper').classList.remove('enabled');
+  document.getElementById('cb1').checked = true;
+  document.getElementById('cb2').checked = true;
+  document.getElementById('row1').classList.add('checked');
+  document.getElementById('row2').classList.add('checked');
+  document.getElementById('summaryLine').innerHTML = '';
+  document.getElementById('confirmBtn').disabled = true;
+}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+
+function updateTarget() {
+  const market = document.getElementById('targetMarket').value;
+  const storySelect = document.getElementById('targetStory');
+  if (market === 'vogue-uk') {
+    storySelect.innerHTML = '<option value="">Select story...</option><option value="new">Create new story in Vogue UK</option><option value="existing">The New Power Dressing (existing draft)</option>';
+  } else if (market) {
+    storySelect.innerHTML = '<option value="">Select story...</option><option value="new">Create new story in this market</option>';
+  } else {
+    storySelect.innerHTML = '<option value="">Select a brand/market first...</option>';
+  }
+  storySelect.disabled = !market;
+  document.getElementById('compListWrapper').classList.remove('enabled');
+  document.getElementById('confirmBtn').disabled = true;
+  document.getElementById('summaryLine').innerHTML = '';
+}
+
+function updateSummary() {
+  const story = document.getElementById('targetStory').value;
+  const sel = document.getElementById('targetMarket');
+  const marketLabel = sel.options[sel.selectedIndex].text;
+  if (story) {
+    document.getElementById('compListWrapper').classList.add('enabled');
+    refreshSummary(marketLabel);
+  } else {
+    document.getElementById('compListWrapper').classList.remove('enabled');
+    document.getElementById('summaryLine').innerHTML = '';
+    document.getElementById('confirmBtn').disabled = true;
+  }
+}
+
+function refreshSummary(marketLabel) {
+  const sel = document.getElementById('targetMarket');
+  const label = marketLabel || sel.options[sel.selectedIndex].text;
+  const count = (document.getElementById('cb1').checked ? 1 : 0) + (document.getElementById('cb2').checked ? 1 : 0);
+  if (count > 0) {
+    document.getElementById('summaryLine').innerHTML = '<strong>' + count + ' component' + (count !== 1 ? 's' : '') + '</strong> will move to ' + label;
+    document.getElementById('confirmBtn').disabled = false;
+  } else {
+    document.getElementById('summaryLine').innerHTML = 'Select at least one component to move';
+    document.getElementById('confirmBtn').disabled = true;
+  }
+}
+
+function toggleRow(rowId, cbId) {
+  const cb = document.getElementById(cbId);
+  cb.checked = !cb.checked;
+  document.getElementById(rowId).classList.toggle('checked', cb.checked);
+  if (document.getElementById('targetStory').value) refreshSummary();
+}
+
+function doConfirm() {
+  closeModal();
+  document.getElementById('successBanner').classList.add('show');
+  document.getElementById('marketBadge').textContent = 'Vogue UK';
+  document.getElementById('passiveIndicator').classList.add('visible');
+  if (document.getElementById('cb1').checked) document.getElementById('activeCard1').style.display = 'none';
+  if (document.getElementById('cb2').checked) document.getElementById('activeCard2').style.display = 'none';
+  const remaining = (!document.getElementById('cb1').checked ? 1 : 0) + (!document.getElementById('cb2').checked ? 1 : 0) + 1;
+  document.getElementById('storySub').innerHTML = 'First publication: Vogue UK &nbsp;&middot;&nbsp; Issue: September 2025 &nbsp;&middot;&nbsp; ' + remaining + ' component' + (remaining !== 1 ? 's' : '');
+  document.getElementById('movedSection').style.display = 'block';
+  document.getElementById('movedList').classList.add('open');
+  document.getElementById('movedChevron').classList.add('open');
+  const count = (document.getElementById('cb1').checked ? 1 : 0) + (document.getElementById('cb2').checked ? 1 : 0);
+  document.getElementById('movedCount').textContent = '(' + count + ')';
+}
+
+function toggleMoved() {
+  document.getElementById('movedList').classList.toggle('open');
+  document.getElementById('movedChevron').classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
