@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copilot — contributor creation (search-first)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+:root {
+  --blue: #3D5AFE;
+  --blue-dark: #2a3eb1;
+  --text: #161616;
+  --text-2: #525252;
+  --text-3: #8d8d8d;
+  --border: #d9d9d9;
+  --field: #f4f4f4;
+  --green-bg: #e3f3e3; --green-text: #1d6f2b; --green-solid: #2e8540;
+  --amber-bg: #fff4d6; --amber-text: #8a6200; --amber-solid: #c98a00;
+  --pend-bg: #e7eefb;  --pend-text: #1d4ea0;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--text); background: #f0f0f0; padding: 32px 20px 80px; }
+.page { max-width: 720px; margin: 0 auto; }
+p { margin: 0; }
+button { font-family: inherit; cursor: pointer; }
+
+h1 { font-size: 34px; font-weight: 700; margin: 0 0 4px; }
+.modline { font-size: 14px; color: var(--text-2); margin-bottom: 22px; }
+
+.card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 26px 30px 30px; }
+.lbl { font-size: 14px; font-weight: 700; margin: 0 0 7px; }
+.field { width: 100%; height: 46px; font-size: 15px; font-family: inherit; padding: 0 13px; border: 1px solid var(--border); border-radius: 6px; background: var(--field); color: var(--text); }
+.field:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 2px rgba(61,90,254,0.3); background: #fff; }
+.field::placeholder { color: var(--text-3); }
+.block { margin-bottom: 20px; }
+
+/* search-first header */
+.search-wrap { position: relative; }
+.search-field { padding-left: 40px; height: 50px; font-size: 15px; }
+.search-ico { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 18px; }
+.search-spin { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 16px; display: none; }
+.searching .search-spin { display: block; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+.rl-hint { font-size: 13px; color: var(--text-2); margin: 8px 2px 0; display: flex; align-items: center; gap: 6px; }
+
+.results { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: none; }
+.results.show { display: block; }
+.res {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; cursor: pointer; border-bottom: 1px solid var(--border);
+}
+.res:last-child { border-bottom: none; }
+.res:hover { background: #f7f8ff; }
+.res .av { width: 38px; height: 38px; border-radius: 50%; background: var(--pend-bg); color: var(--pend-text); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.res .who { flex: 1; min-width: 0; }
+.res .rn { font-size: 15px; font-weight: 600; }
+.res .rm { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+.res .badge { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+.badge.match { background: var(--green-bg); color: var(--green-text); }
+.badge.dupe { background: var(--amber-bg); color: var(--amber-text); }
+.res-create { background: #fafaff; }
+.res-create .av { background: var(--blue); color: #fff; }
+.res-create .rm { color: var(--blue); font-weight: 600; }
+
+.banner { display: flex; gap: 10px; align-items: flex-start; border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.5; margin-top: 12px; }
+.banner i { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+.banner.ok { background: var(--green-bg); color: var(--green-text); }
+.banner.warn { background: var(--amber-bg); color: var(--amber-text); }
+.banner.info { background: var(--pend-bg); color: var(--pend-text); }
+.banner .b-act { margin-left: auto; }
+.linkpill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; background: var(--green-bg); color: var(--green-text); border-radius: 999px; padding: 4px 11px; }
+
+.divider { height: 1px; background: var(--border); margin: 6px 0 22px; }
+.form-locked { opacity: 0.5; pointer-events: none; }
+.charcount { font-size: 12px; color: var(--text-3); text-align: right; margin-top: 4px; }
+
+.req { font-size: 11px; font-weight: 700; color: var(--amber-text); background: var(--amber-bg); border-radius: 4px; padding: 1px 6px; margin-left: 7px; vertical-align: middle; }
+
+.actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.ghost { border: 1px solid var(--border); background: #fff; border-radius: 7px; font-size: 14px; font-weight: 600; padding: 11px 18px; }
+.primary { border: none; background: var(--blue); color: #fff; border-radius: 7px; font-size: 14px; font-weight: 700; padding: 11px 22px; display: inline-flex; align-items: center; gap: 7px; }
+.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.scenarios { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.scn { font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 7px 13px; }
+.scn:hover { border-color: var(--blue); color: var(--blue); }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(16px); background: var(--text); color: #fff; font-size: 14px; padding: 12px 20px; border-radius: 8px; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 50; max-width: 92vw; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.note { background: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text-2); padding: 13px 16px; margin-top: 20px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Contributor</h1>
+  <p class="modline">Brand-market: Vogue Germany &middot; new contributor</p>
+
+  <div class="scenarios">
+    <span style="font-size:12px; color:var(--text-3); align-self:center;">Try a scenario:</span>
+    <button class="scn" onclick="scenario('match')">Search "Testino" &rarr; found in Rightsline</button>
+    <button class="scn" onclick="scenario('dupe')">Search "Ghertner" &rarr; already in this market</button>
+    <button class="scn" onclick="scenario('none')">Search "Neuhaus" &rarr; not in Rightsline</button>
+    <button class="scn" onclick="resetAll()">Reset</button>
+  </div>
+
+  <div class="card">
+
+    <div class="block search-wrap" id="searchWrap">
+      <p class="lbl">Find contributor in Rightsline</p>
+      <i class="ti ti-search search-ico"></i>
+      <i class="ti ti-loader-2 search-spin"></i>
+      <input type="text" class="field search-field" id="search" placeholder="Search by name or email&hellip;" autocomplete="off" oninput="onSearch()">
+      <p class="rl-hint"><i class="ti ti-info-circle" style="font-size:14px;"></i> Rightsline is the source of truth. Start here so the record is linked from the moment it's created.</p>
+      <div class="results" id="results"></div>
+    </div>
+
+    <div id="stateBanner"></div>
+
+    <div class="divider" id="divider" style="display:none;"></div>
+
+    <div id="form" class="form-locked">
+      <div class="block">
+        <p class="lbl">Name</p>
+        <input type="text" class="field" id="fName" placeholder="" oninput="updateChars()">
+        <p class="charcount" id="chars">0 chars</p>
+      </div>
+      <div class="block">
+        <p class="lbl">Title</p>
+        <input type="text" class="field" id="fTitle" placeholder="">
+      </div>
+      <div class="block">
+        <p class="lbl" id="emailLbl">Email</p>
+        <input type="text" class="field" id="fEmail" placeholder="">
+      </div>
+      <div class="block">
+        <p class="lbl">Biography</p>
+        <input type="text" class="field" id="fBio" placeholder="" style="height:64px;">
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" onclick="resetAll()">Cancel</button>
+      <button class="primary" id="saveBtn" disabled onclick="save()"><i class="ti ti-check" style="font-size:15px;"></i> <span id="saveLbl">Save contributor</span></button>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <b>Prototype notes:</b> creation starts with a Rightsline search, so new records are born linked. Three outcomes: a Rightsline match links the record and pre-fills the form (future path); a Rightsline ID already used in this brand-market triggers dedup, offering the existing record instead of a duplicate; no match offers "Create new in Rightsline" inline with the typed name carried over. The same search + match step also powers link-after-create for the existing unlinked backlog. Try the scenario buttons above.
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const RL = {
+  testino: { id: '51077', name: 'Mario Testino', email: 'studio@mariotestino.com', meta: 'Photographer \u00b7 global record', dupeMarket: false },
+  ghertner: { id: '48922', name: 'Zo\u00eb Ghertner', email: 'mgmt@zoeghertner.com', meta: 'Photographer \u00b7 global record', dupeMarket: true },
+};
+let linkedId = null;
+let mode = null;
+let toastTimer = null;
+
+function setSearching(on) { document.getElementById('searchWrap').classList.toggle('searching', on); }
+
+function onSearch() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const results = document.getElementById('results');
+  document.getElementById('stateBanner').innerHTML = '';
+  if (q.length < 2) { results.classList.remove('show'); results.innerHTML = ''; lockForm(true); return; }
+  setSearching(true);
+  setTimeout(() => {
+    setSearching(false);
+    renderResults(q);
+  }, 350);
+}
+
+function renderResults(q) {
+  const results = document.getElementById('results');
+  const hits = Object.values(RL).filter(r => r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q));
+  let html = '';
+  hits.forEach(r => {
+    const init = r.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    const badge = r.dupeMarket
+      ? '<span class="badge dupe">Already in this market</span>'
+      : '<span class="badge match">In Rightsline</span>';
+    html += '<div class="res" onclick="pick(\'' + r.id + '\')"><div class="av">' + init + '</div>' +
+      '<div class="who"><p class="rn">' + r.name + '</p><p class="rm">Rightsline #' + r.id + ' \u00b7 ' + r.meta + '</p></div>' + badge + '</div>';
+  });
+  const typed = document.getElementById('search').value.trim();
+  html += '<div class="res res-create" onclick="createNew()"><div class="av"><i class="ti ti-plus" style="font-size:16px;"></i></div>' +
+    '<div class="who"><p class="rn">' + (typed || 'New contributor') + '</p><p class="rm">Create new in Rightsline</p></div></div>';
+  results.innerHTML = html;
+  results.classList.add('show');
+}
+
+function pick(id) {
+  const r = Object.values(RL).find(x => x.id === id);
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('search').value = r.name;
+  linkedId = id;
+  if (r.dupeMarket) {
+    mode = 'dupe';
+    document.getElementById('stateBanner').innerHTML =
+      '<div class="banner warn"><i class="ti ti-alert-triangle"></i><div><b>' + r.name + ' already exists in Vogue Germany.</b><br>' +
+      'Rightsline #' + r.id + ' is already linked to a contributor record in this brand-market. Use the existing record instead of creating a duplicate.</div></div>' +
+      '<div style="display:flex; gap:10px; margin-top:10px;"><button class="primary" onclick="useExisting()"><i class="ti ti-arrow-right" style="font-size:15px;"></i> Use existing record</button>' +
+      '<button class="ghost" onclick="createAnyway()">Create separate record anyway</button></div>';
+    lockForm(true);
+    setSave(false);
+  } else {
+    mode = 'match';
+    fill(r);
+    document.getElementById('stateBanner').innerHTML =
+      '<div class="banner ok"><i class="ti ti-link"></i><div><span class="linkpill"><i class="ti ti-check" style="font-size:12px;"></i> Linked to Rightsline #' + r.id + '</span><br>' +
+      '<span style="display:inline-block; margin-top:6px;">Record will be created linked. Writer agreement resolves automatically once saved.</span></div></div>';
+    lockForm(false);
+    setSave(true, 'Create linked contributor');
+  }
+}
+
+function createNew() {
+  const typed = document.getElementById('search').value.trim();
+  document.getElementById('results').classList.remove('show');
+  mode = 'create';
+  linkedId = 'new';
+  document.getElementById('fName').value = typed;
+  updateChars();
+  document.getElementById('stateBanner').innerHTML =
+    '<div class="banner info"><i class="ti ti-sparkles"></i><div><b>Not in Rightsline yet.</b><br>' +
+    'A Rightsline record will be created alongside this Copilot record, bound together. Fill the details below.</div></div>';
+  lockForm(false);
+  document.getElementById('emailLbl').innerHTML = 'Email <span class="req">required for Rightsline</span>';
+  validateCreate();
+}
+
+function fill(r) {
+  document.getElementById('fName').value = r.name;
+  document.getElementById('fEmail').value = r.email;
+  document.getElementById('emailLbl').innerHTML = 'Email';
+  updateChars();
+}
+function lockForm(locked) { document.getElementById('form').classList.toggle('form-locked', locked); document.getElementById('divider').style.display = locked ? 'none' : 'block'; }
+function setSave(on, label) {
+  document.getElementById('saveBtn').disabled = !on;
+  if (label) document.getElementById('saveLbl').textContent = label;
+}
+function updateChars() { document.getElementById('chars').textContent = document.getElementById('fName').value.length + ' chars'; if (mode === 'create') validateCreate(); }
+function validateCreate() {
+  const ok = document.getElementById('fName').value.trim() && document.getElementById('fEmail').value.trim();
+  setSave(ok, 'Create in Rightsline + Copilot');
+}
+document.getElementById('fEmail').addEventListener('input', () => { if (mode === 'create') validateCreate(); });
+
+function useExisting() { showToast('Opening the existing Vogue Germany record. No duplicate created.'); }
+function createAnyway() {
+  mode = 'match';
+  const r = Object.values(RL).find(x => x.id === linkedId);
+  fill(r);
+  document.getElementById('stateBanner').innerHTML =
+    '<div class="banner ok"><i class="ti ti-link"></i><div><span class="linkpill"><i class="ti ti-check" style="font-size:12px;"></i> Linked to Rightsline #' + r.id + '</span><br>' +
+    '<span style="display:inline-block; margin-top:6px;">Separate record in this market, linked to the same Rightsline person.</span></div></div>';
+  lockForm(false);
+  setSave(true, 'Create linked contributor');
+}
+function save() {
+  if (mode === 'create') showToast('Created in Rightsline (#new) and linked to this Copilot record.');
+  else showToast('Contributor created, linked to Rightsline #' + linkedId + '. Writer agreement auto-resolved.');
+}
+function resetAll() {
+  document.getElementById('search').value = '';
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('stateBanner').innerHTML = '';
+  ['fName','fTitle','fEmail','fBio'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('emailLbl').innerHTML = 'Email';
+  updateChars();
+  lockForm(true);
+  setSave(false, 'Save contributor');
+  linkedId = null; mode = null;
+}
+function scenario(kind) {
+  resetAll();
+  const map = { match: 'Testino', dupe: 'Ghertner', none: 'Neuhaus' };
+  const el = document.getElementById('search');
+  el.value = map[kind];
+  onSearch();
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3600);
+}
+resetAll();
+</script>
+</body>
+</html>
