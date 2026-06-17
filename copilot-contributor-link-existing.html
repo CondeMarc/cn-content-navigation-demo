@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Copilot — link existing contributor to Rightsline</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+:root {
+  --blue: #3D5AFE;
+  --blue-dark: #2a3eb1;
+  --text: #161616;
+  --text-2: #525252;
+  --text-3: #8d8d8d;
+  --border: #d9d9d9;
+  --field: #f4f4f4;
+  --green-bg: #e3f3e3; --green-text: #1d6f2b; --green-solid: #2e8540;
+  --amber-bg: #fff4d6; --amber-text: #8a6200; --amber-solid: #c98a00;
+  --pend-bg: #e7eefb;  --pend-text: #1d4ea0;
+  --red-bg: #fdeaea;   --red-text: #b42318;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--text); background: #f0f0f0; padding: 32px 20px 80px; }
+.page { max-width: 720px; margin: 0 auto; }
+p { margin: 0; }
+button { font-family: inherit; cursor: pointer; }
+
+h1 { font-size: 34px; font-weight: 700; margin: 0 0 4px; }
+.modline { font-size: 14px; color: var(--text-2); margin-bottom: 22px; }
+
+.card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 26px 30px 30px; }
+
+/* unlinked status banner at top of record */
+.statusbar { display: flex; align-items: center; gap: 12px; border-radius: 8px; padding: 14px 16px; margin-bottom: 22px; }
+.statusbar.unlinked { background: var(--amber-bg); }
+.statusbar.linked { background: var(--green-bg); }
+.statusbar .si { font-size: 22px; flex-shrink: 0; }
+.statusbar.unlinked .si { color: var(--amber-solid); }
+.statusbar.linked .si { color: var(--green-solid); }
+.statusbar .st { font-size: 14px; font-weight: 700; }
+.statusbar.unlinked .st { color: var(--amber-text); }
+.statusbar.linked .st { color: var(--green-text); }
+.statusbar .ss { font-size: 12px; margin-top: 1px; }
+.statusbar.unlinked .ss { color: var(--amber-text); }
+.statusbar.linked .ss { color: var(--green-text); }
+.statusbar .sa { margin-left: auto; }
+.btn-link { border: none; background: var(--amber-solid); color: #fff; border-radius: 7px; font-size: 13px; font-weight: 700; padding: 9px 15px; display: inline-flex; align-items: center; gap: 6px; }
+
+.lbl { font-size: 13px; font-weight: 700; margin: 0 0 6px; }
+.ro { font-size: 15px; padding: 10px 0; border-bottom: 1px solid #eee; }
+.ro .v { color: var(--text); }
+.ro .k { font-size: 12px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 3px; }
+.record { margin-bottom: 4px; }
+
+/* link panel */
+.linkpanel { border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 22px; background: #fafaff; }
+.lp-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.lp-sub { font-size: 13px; color: var(--text-2); margin: 4px 0 14px; }
+
+.proposed {
+  display: flex; align-items: center; gap: 13px;
+  border: 1px solid var(--border); border-radius: 9px; padding: 13px 15px; background: #fff;
+}
+.proposed .av { width: 42px; height: 42px; border-radius: 50%; background: var(--pend-bg); color: var(--pend-text); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+.proposed .who { flex: 1; min-width: 0; }
+.proposed .rn { font-size: 16px; font-weight: 700; }
+.proposed .rm { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.conf { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.conf.high { background: var(--green-bg); color: var(--green-text); }
+.conf.dupe { background: var(--amber-bg); color: var(--amber-text); }
+
+.match-reasons { font-size: 12px; color: var(--text-2); margin: 10px 2px 0; display: flex; gap: 14px; flex-wrap: wrap; }
+.match-reasons span { display: inline-flex; align-items: center; gap: 5px; }
+.match-reasons i { color: var(--green-solid); font-size: 14px; }
+
+.lp-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.primary { border: none; background: var(--blue); color: #fff; border-radius: 7px; font-size: 14px; font-weight: 700; padding: 11px 18px; display: inline-flex; align-items: center; gap: 7px; }
+.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.ghost { border: 1px solid var(--border); background: #fff; border-radius: 7px; font-size: 14px; font-weight: 600; padding: 11px 16px; }
+.ghost.warn { color: var(--amber-text); }
+
+/* manual search (after rejecting) */
+.search-wrap { position: relative; margin-top: 14px; display: none; }
+.search-wrap.show { display: block; }
+.search-field { width: 100%; height: 46px; font-size: 15px; font-family: inherit; padding: 0 13px 0 40px; border: 1px solid var(--border); border-radius: 7px; background: #fff; }
+.search-field:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 2px rgba(61,90,254,0.3); }
+.search-ico { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-3); font-size: 18px; }
+.results { margin-top: 10px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; display: none; }
+.results.show { display: block; }
+.res { display: flex; align-items: center; gap: 12px; padding: 11px 14px; cursor: pointer; border-bottom: 1px solid var(--border); }
+.res:last-child { border-bottom: none; }
+.res:hover { background: #f7f8ff; }
+.res .av { width: 36px; height: 36px; border-radius: 50%; background: var(--pend-bg); color: var(--pend-text); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.res .who { flex: 1; min-width: 0; }
+.res .rn { font-size: 14px; font-weight: 600; }
+.res .rm { font-size: 12px; color: var(--text-2); }
+.res-create { background: #fafaff; }
+.res-create .av { background: var(--blue); color: #fff; }
+.res-create .rm { color: var(--blue); font-weight: 600; }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(16px); background: var(--text); color: #fff; font-size: 14px; padding: 12px 20px; border-radius: 8px; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 50; max-width: 92vw; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.note { background: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text-2); padding: 13px 16px; margin-top: 20px; line-height: 1.6; }
+
+.scenarios { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+.scn { font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: #fff; border-radius: 999px; padding: 7px 13px; }
+.scn:hover { border-color: var(--blue); color: var(--blue); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Contributor</h1>
+  <p class="modline">Last modified 14 March 2024 &middot; Vogue Germany &middot; created before Rightsline linking</p>
+
+  <div class="scenarios">
+    <span style="font-size:12px; color:var(--text-3);">Try:</span>
+    <button class="scn" onclick="loadCase('high')">High-confidence match</button>
+    <button class="scn" onclick="loadCase('dupe')">Match already used in this market</button>
+    <button class="scn" onclick="loadCase('reject')">Reject &rarr; search manually</button>
+    <button class="scn" onclick="loadCase('reset')">Reset</button>
+  </div>
+
+  <div class="card">
+
+    <div class="statusbar unlinked" id="statusbar">
+      <i class="ti ti-unlink si"></i>
+      <div>
+        <p class="st">Not linked to Rightsline</p>
+        <p class="ss">Text rights can't be checked until this record is linked.</p>
+      </div>
+      <div class="sa"><button class="btn-link" onclick="startLink()"><i class="ti ti-link" style="font-size:14px;"></i> Link to Rightsline</button></div>
+    </div>
+
+    <div class="linkpanel" id="linkpanel" style="display:none;">
+      <p class="lp-title"><i class="ti ti-link" style="font-size:17px; color:var(--blue);"></i> Link to Rightsline</p>
+      <p class="lp-sub" id="lpSub">We found a likely match based on this record's details.</p>
+
+      <div id="proposedWrap"></div>
+
+      <div class="lp-actions" id="lpActions"></div>
+
+      <div class="search-wrap" id="searchWrap">
+        <i class="ti ti-search search-ico"></i>
+        <input type="text" class="search-field" id="search" placeholder="Search Rightsline by name or email&hellip;" autocomplete="off" oninput="onSearch()">
+        <div class="results" id="results"></div>
+      </div>
+    </div>
+
+    <div class="record">
+      <div class="ro"><p class="k">Name</p><p class="v" id="rName">Madeline Fass</p></div>
+      <div class="ro"><p class="k">Title</p><p class="v">Contributing writer</p></div>
+      <div class="ro"><p class="k">Email</p><p class="v" id="rEmail">m.fass@condenast.com</p></div>
+      <div class="ro"><p class="k">Biography</p><p class="v" style="color:var(--text-3);">&mdash;</p></div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <b>Prototype notes:</b> this is the link-after-create path for the existing unlinked backlog (records made before search-first). The record already exists; the system proposes a Rightsline match with the reasons it matched. Confirm links it; reject opens a manual Rightsline search with create-new fallback. If the proposed Rightsline ID is already used by another record in this brand-market, the dedup warning offers to merge into the existing record. Same resolver as creation and the rights workspace.
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const RL = {
+  '52310': { id: '52310', name: 'Madeline Fass', email: 'm.fass@condenast.com', meta: 'Writer \u00b7 global record', reasons: ['Name exact', 'Email exact'] },
+  '52311': { id: '52311', name: 'Madeleine Fasse', email: 'madeleine.fasse@gmail.com', meta: 'Writer \u00b7 global record', reasons: ['Name similar'] }
+};
+let currentCase = 'high';
+let toastTimer = null;
+
+function startLink() {
+  document.getElementById('linkpanel').style.display = 'block';
+  renderProposed();
+}
+
+function renderProposed() {
+  const wrap = document.getElementById('proposedWrap');
+  const actions = document.getElementById('lpActions');
+  const sub = document.getElementById('lpSub');
+  document.getElementById('searchWrap').classList.remove('show');
+  document.getElementById('results').classList.remove('show');
+
+  if (currentCase === 'reject') {
+    sub.textContent = 'No confident match. Search Rightsline to link this record.';
+    wrap.innerHTML = '';
+    actions.innerHTML = '';
+    document.getElementById('searchWrap').classList.add('show');
+    document.getElementById('search').focus();
+    return;
+  }
+
+  const r = RL['52310'];
+  const init = r.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  const dupe = currentCase === 'dupe';
+  sub.textContent = 'We found a likely match based on this record\u2019s details.';
+  wrap.innerHTML =
+    '<div class="proposed"><div class="av">' + init + '</div>' +
+    '<div class="who"><p class="rn">' + r.name + '</p><p class="rm">Rightsline #' + r.id + ' \u00b7 ' + r.meta + '</p></div>' +
+    '<span class="conf ' + (dupe ? 'dupe' : 'high') + '">' + (dupe ? 'Already in this market' : 'High confidence') + '</span></div>' +
+    '<div class="match-reasons">' + r.reasons.map(x => '<span><i class="ti ti-check"></i> ' + x + '</span>').join('') + '</div>';
+
+  if (dupe) {
+    actions.innerHTML =
+      '<button class="primary" onclick="merge()"><i class="ti ti-git-merge" style="font-size:15px;"></i> Merge into existing record</button>' +
+      '<button class="ghost" onclick="reject()">Not a match</button>';
+  } else {
+    actions.innerHTML =
+      '<button class="primary" onclick="confirm(\'' + r.id + '\')"><i class="ti ti-check" style="font-size:15px;"></i> Confirm link</button>' +
+      '<button class="ghost warn" onclick="reject()">Not a match</button>';
+  }
+}
+
+function reject() {
+  currentCase = 'reject';
+  renderProposed();
+}
+
+function onSearch() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const results = document.getElementById('results');
+  if (q.length < 2) { results.classList.remove('show'); return; }
+  let html = '';
+  Object.values(RL).filter(r => r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)).forEach(r => {
+    const init = r.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+    html += '<div class="res" onclick="confirm(\'' + r.id + '\')"><div class="av">' + init + '</div>' +
+      '<div class="who"><p class="rn">' + r.name + '</p><p class="rm">Rightsline #' + r.id + ' \u00b7 ' + r.meta + '</p></div></div>';
+  });
+  const typed = document.getElementById('search').value.trim();
+  html += '<div class="res res-create" onclick="createNew()"><div class="av"><i class="ti ti-plus" style="font-size:15px;"></i></div>' +
+    '<div class="who"><p class="rn">' + (typed || 'New') + '</p><p class="rm">Create new in Rightsline &amp; link</p></div></div>';
+  results.innerHTML = html;
+  results.classList.add('show');
+}
+
+function confirm(id) {
+  markLinked(id);
+  showToast('Linked to Rightsline #' + id + '. Writer agreement auto-resolved. Link is permanent.');
+}
+function merge() {
+  markLinked('52310', true);
+  showToast('Merged into the existing Vogue Germany record. Duplicate removed.');
+}
+function createNew() {
+  markLinked('new');
+  showToast('Created in Rightsline and linked to this record.');
+}
+
+function markLinked(id, merged) {
+  const sb = document.getElementById('statusbar');
+  sb.className = 'statusbar linked';
+  sb.innerHTML = '<i class="ti ti-link si"></i><div><p class="st">Linked to Rightsline #' + id + '</p>' +
+    '<p class="ss">' + (merged ? 'Merged into existing record. ' : '') + 'Writer agreement resolves automatically.</p></div>';
+  document.getElementById('linkpanel').style.display = 'none';
+}
+
+function loadCase(kind) {
+  if (kind === 'reset') {
+    const sb = document.getElementById('statusbar');
+    sb.className = 'statusbar unlinked';
+    sb.innerHTML = '<i class="ti ti-unlink si"></i><div><p class="st">Not linked to Rightsline</p><p class="ss">Text rights can\u2019t be checked until this record is linked.</p></div>' +
+      '<div class="sa"><button class="btn-link" onclick="startLink()"><i class="ti ti-link" style="font-size:14px;"></i> Link to Rightsline</button></div>';
+    document.getElementById('linkpanel').style.display = 'none';
+    currentCase = 'high';
+    return;
+  }
+  currentCase = kind === 'dupe' ? 'dupe' : (kind === 'reject' ? 'reject' : 'high');
+  startLink();
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3800);
+}
+</script>
+</body>
+</html>
